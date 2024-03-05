@@ -1,10 +1,7 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import Navbar from "./components/navbar";
+import Navbar from "../components/navbar";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
    title: "Create Next App",
@@ -18,8 +15,8 @@ export default function RootLayout({
 }>) {
    return (
       <html lang="en">
-         <body className="relative flex min-h-screen w-full flex-col items-center bg-gray-950 leading-6 text-white">
-            <div className="bg-radial-gradient-master absolute left-1/2 top-0 -z-10 hidden h-screen w-full -translate-x-1/2 dark:block"></div>
+         <body className="dark relative flex min-h-screen w-full flex-col items-center bg-gray-950 leading-6 text-white">
+            <div className="bg-radial-gradient-master absolute left-1/2 top-0 -z-10 block h-screen w-full -translate-x-1/2"></div>
             <Navbar />
             {children}
          </body>

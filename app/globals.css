@@ -10,12 +10,12 @@
    scrollbar-width: none;
 }
 
-/* *::-webkit-scrollbar {
-  display: none;
-} */
+*::-webkit-scrollbar {
+   display: none;
+}
 
 html {
-   min-width: 360px;
+   min-width: 280px;
    scroll-behavior: smooth;
    min-height: 100%;
 }
