@@ -1,6 +1,6 @@
 import licenseValidationAbi from '@/artifacts/contracts/LicenseValidation.sol/LicenseValidation.json'
 import address from '@/contracts/contractAddress.json'
-import { NewLicense } from '@/lib/type.dt'
+import { License, NewLicense } from '@/lib/type.dt'
 import { ethers } from 'ethers'
 
 const toWei = (num: number) => ethers.parseEther(num.toString())
@@ -11,7 +11,7 @@ let ethereum: any
 if (typeof window !== 'undefined') ethereum = (window as any).ethereum
 
 async function getEthereumContracts() {
-   // const accounts = await ethereum?.request?.({ method: 'eth_accounts' })
+   const accounts = await ethereum?.request?.({ method: 'eth_accounts' })
 
    // if (accounts?.length > 0) {
    const provider = new ethers.BrowserProvider(ethereum)
@@ -19,21 +19,13 @@ async function getEthereumContracts() {
    const contracts = new ethers.Contract(address.contractAddress, licenseValidationAbi.abi, signer)
 
    return contracts
-   // } else {
-   //    const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL)
-   //    const wallet = ethers.Wallet.createRandom()
-   //    const signer = wallet.connect(provider)
-   //    const contracts = new ethers.Contract(address.contractAddress, licenseValidationAbi.abi, signer)
 
-   //    return contracts
-   // }
 }
 
 
-export async function addLicense(license: NewLicense) {
+export async function addLicense(license: NewLicense): Promise<void> {
    if (!ethereum) {
-      reportError('Please install a browser provider')
-      return Promise.reject(new Error('Browser provider not installed'))
+      console.error("Ethereum provider not available.");
    }
 
    try {
@@ -45,10 +37,33 @@ export async function addLicense(license: NewLicense) {
          license.description
       )
 
-
-      return result
+      return Promise.resolve(result);
    } catch (error) {
       reportError(error)
       return Promise.reject(error)
    }
 }
+
+
+export async function getLicenses(): Promise<License[]> {
+   if (!ethereum) {
+      console.error("Ethereum provider not available.");
+   }
+   const contract = await getEthereumContracts()
+   const result = await contract.getUserLicenses();
+   return structuredLicenses(result);
+
+}
+
+const structuredLicenses = (licenses: License[]): License[] =>
+   licenses
+      .map((license) => ({
+         id: Number(license.id),
+         licenseNum: license.licenseNum,
+         licenseName: license.licenseNum,
+         issuedDate: Number(license.issuedDate),
+         expireDate: Number(license.expireDate),
+         description: license.description,
+         licenseOwner: license.licenseOwner,
+      }))
+      .sort((a, b) => b.issuedDate - a.issuedDate)

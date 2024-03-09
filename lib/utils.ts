@@ -5,6 +5,11 @@ export function cn(...inputs: ClassValue[]) {
    return twMerge(clsx(inputs))
 }
 
+export function convertTimestampToDate(timestamp: number): Date {
+   const date = new Date(timestamp);
+
+   return date;
+}
 
 export const formatBalance = (rawBalance: string) => {
    const balance = (parseInt(rawBalance) / 1000000000000000000).toFixed(2);

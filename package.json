@@ -8,13 +8,16 @@
       "start": "next start",
       "lint": "next lint",
       "compile": "npx hardhat compile",
-      "deploy": "npx hardhat run scripts/deploy.js"
+      "blockchain": "yarn hardhat node",
+      "deploy": "npx hardhat run scripts/deploy.js",
+      "seed": "npx hardhat run scripts/seed.js"
    },
    "dependencies": {
       "@hookform/resolvers": "^3.3.4",
       "@nomicfoundation/hardhat-ethers": "^3.0.0",
       "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
       "@nomicfoundation/hardhat-verify": "^2.0.0",
+      "@radix-ui/react-dialog": "^1.0.5",
       "@radix-ui/react-icons": "^1.3.0",
       "@radix-ui/react-label": "^2.0.2",
       "@radix-ui/react-popover": "^1.0.7",
@@ -31,12 +34,12 @@
       "date-fns": "^3.3.1",
       "ethers": "^6.11.1",
       "hardhat-gas-reporter": "^1.0.8",
+      "lucide-react": "^0.344.0",
       "next": "14.1.0",
       "react": "^18",
       "react-day-picker": "^8.10.0",
       "react-dom": "^18",
       "react-hook-form": "^7.51.0",
-      "react-icons": "^5.0.1",
       "solidity-coverage": "^0.8.1",
       "tailwind-merge": "^2.2.1",
       "tailwindcss-animate": "^1.0.7",
@@ -47,6 +50,7 @@
       "zod": "^3.22.4"
    },
    "devDependencies": {
+      "@faker-js/faker": "^8.4.1",
       "@nomicfoundation/hardhat-chai-matchers": "^2.0.6",
       "@nomicfoundation/hardhat-toolbox": "^4.0.0",
       "@types/node": "^20",

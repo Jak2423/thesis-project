@@ -1,7 +1,16 @@
 "use client";
 
+import licenseValidationAbi from "@/artifacts/contracts/LicenseValidation.sol/LicenseValidation.json";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import {
+   Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogHeader,
+   DialogTitle,
+} from "@/components/ui/dialog";
 import {
    Form,
    FormControl,
@@ -16,13 +25,19 @@ import {
    PopoverContent,
    PopoverTrigger,
 } from "@/components/ui/popover";
+import Spinner from "@/components/ui/spinner";
+import { contractAddress } from "@/contracts/constants";
 import { cn } from "@/lib/utils";
-import { addLicense } from "@/services/blockchain";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon } from "@radix-ui/react-icons";
+import { CalendarIcon, CheckCircledIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import {
+   useAccount,
+   useWaitForTransactionReceipt,
+   useWriteContract,
+} from "wagmi";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -41,11 +56,23 @@ const formSchema = z.object({
    }),
 });
 
-export default function CreateLicense() {
+export default function Page() {
+   const [hasError, setHasError] = useState(false);
    const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
+   const { writeContract, isPending, error, data: hash } = useWriteContract();
+   const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
+      hash,
+   });
+   const { isConnected } = useAccount();
 
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
+      defaultValues: {
+         licenseName: "",
+         licenseNum: "",
+         description: "",
+      },
    });
 
    function handleUploadFile(event: ChangeEvent<HTMLInputElement>) {
@@ -55,23 +82,69 @@ export default function CreateLicense() {
          const file = fileList[0];
          setUploadedFile(file);
       }
-      console.log(fileList);
    }
 
    async function onSubmit(data: z.infer<typeof formSchema>) {
-      const id = await addLicense({
-         licenseName: data.licenseName,
-         licenseNum: data.licenseNum,
-         description: data.description,
-         expireDate: Number(data.expireDate),
-      });
-      console.log(id);
+      if (isConnected) {
+         writeContract({
+            abi: licenseValidationAbi.abi,
+            address: contractAddress,
+            functionName: "addLicense",
+            args: [
+               data.licenseNum,
+               data.licenseName,
+               data.expireDate.getTime(),
+               data.description,
+            ],
+         });
+
+         if (isSuccess) {
+            form.reset();
+         }
+      }
    }
+
+   useEffect(() => {
+      setHasError(true);
+   }, [error]);
+
    return (
       <main className="mx-auto flex w-full flex-col items-start lg:max-w-screen-lg">
-         <div className="mb-8 w-full border-b border-gray-600 py-4">
-            <h1 className="text-xl font-semibold">Лиценз бүртгүүлэх</h1>
-         </div>
+         {isLoading && (
+            <Alert className="fixed bottom-2.5 right-2.5 w-1/3">
+               <Spinner className="h-5 w-5" />
+               <AlertTitle>Баталгаажуулж байна</AlertTitle>
+               <AlertDescription>
+                  Баталгаажуулахыг хүлээж байна...
+               </AlertDescription>
+            </Alert>
+         )}
+         {isSuccess && (
+            <Alert className="fixed bottom-2.5 right-2.5 w-1/3">
+               <CheckCircledIcon className="h-5 w-5" />
+               <AlertTitle>Амжилттай</AlertTitle>
+               <AlertDescription>Лиценз амжилттай үүсгэгдлээ.</AlertDescription>
+            </Alert>
+         )}
+         {isError && (
+            <Alert className="fixed bottom-2.5 right-2.5 w-1/3">
+               <CheckCircledIcon className="h-5 w-5" />
+               <AlertTitle>Алдаа</AlertTitle>
+               <AlertDescription>
+                  Лиценз баталгаажуулахад алдаа гарлаа.
+               </AlertDescription>
+            </Alert>
+         )}
+         {error && (
+            <Dialog open={hasError} onOpenChange={setHasError}>
+               <DialogContent className="dark:text-gray-200">
+                  <DialogHeader>
+                     <DialogTitle>{error?.name}</DialogTitle>
+                     <DialogDescription>{error?.message}</DialogDescription>
+                  </DialogHeader>
+               </DialogContent>
+            </Dialog>
+         )}
          <Form {...form}>
             <form
                onSubmit={form.handleSubmit(onSubmit)}
@@ -175,9 +248,13 @@ export default function CreateLicense() {
                      </FormItem>
                   )}
                />
-               <Button type="submit" size={"lg"}>
-                  Бүртгүүлэх
-               </Button>
+               {isPending ? (
+                  <p>loading...</p>
+               ) : (
+                  <Button type="submit" size={"lg"}>
+                     Үүсгэх
+                  </Button>
+               )}
             </form>
          </Form>
       </main>

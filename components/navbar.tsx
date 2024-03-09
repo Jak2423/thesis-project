@@ -1,52 +1,43 @@
-"use client";
-import { formatAddress } from "@/lib/utils";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Button, buttonVariants } from "./ui/button";
 
-let ethereum: any;
-
-if (typeof window !== "undefined") ethereum = (window as any).ethereum;
+// let ethereum: any;
+// if (typeof window !== "undefined") ethereum = (window as any).ethereum;
 
 export default function Navbar() {
-   const [account, setAccount] = useState("");
+   // const [account, setAccount] = useState("");
 
-   const checkEthereumExists = () => {
-      if (!ethereum) {
-         console.log("Please Install MetaMask.");
-         return false;
-      }
-      return true;
-   };
+   // const checkEthereumExists = () => {
+   //    if (!ethereum) {
+   //       console.log("Please Install MetaMask.");
+   //       return false;
+   //    }
+   //    return true;
+   // };
 
-   const connectWallet = async () => {
-      if (checkEthereumExists()) {
-         try {
-            const accounts = await ethereum.request({
-               method: "eth_requestAccounts",
-            });
-            setAccount(accounts[0]);
-         } catch (err: any) {
-            console.log(err.message);
-         }
-      }
-   };
+   // const connectWallet = async () => {
+   //    if (checkEthereumExists()) {
+   //       try {
+   //          const accounts = await ethereum.request({
+   //             method: "eth_requestAccounts",
+   //          });
+   //          setAccount(accounts[0]);
+   //       } catch (err: any) {
+   //          console.log(err.message);
+   //       }
+   //    }
+   // };
 
-   const getConnectedAccounts = async () => {
-      try {
-         const accounts = await ethereum.request({
-            method: "eth_accounts",
-         });
-         console.log(accounts);
-         setAccount(accounts[0]);
-      } catch (err: any) {
-         console.log(err.message);
-      }
-   };
-
-   useEffect(() => {
-      connectWallet();
-   }, []);
+   // const getConnectedAccounts = async () => {
+   //    try {
+   //       const accounts = await ethereum.request({
+   //          method: "eth_accounts",
+   //       });
+   //       setAccount(accounts[0]);
+   //    } catch (err: any) {
+   //       console.log(err.message);
+   //    }
+   // };
 
    return (
       <nav className="mb-8 flex w-full flex-col justify-center py-8">
@@ -57,26 +48,24 @@ export default function Navbar() {
                      LICENS
                   </span>
                </Link>
-               <Link href={"/create-license"}>
+               <Link href={"/licenses"}>
                   <span className="text-sm text-gray-200 hover:opacity-70">
-                     Лиценз Бүртгүүлэх
+                     Лицензүүд
+                  </span>
+               </Link>
+               <Link href={"/licenses/create"}>
+                  <span className="text-sm text-gray-200 hover:opacity-70">
+                     Лиценз Үүсгэх
                   </span>
                </Link>
             </div>
-
-            {account ? (
-               <Button variant={"outline"} size={"lg"} disabled>
-                  {formatAddress(account)}
-               </Button>
-            ) : (
-               <Link
-                  href={"/"}
-                  className={buttonVariants({ variant: "outline", size: "lg" })}
-                  onClick={connectWallet}
-               >
-                  Нэвтрэх
-               </Link>
-            )}
+            <ConnectButton
+               showBalance={false}
+               accountStatus={{
+                  smallScreen: "avatar",
+                  largeScreen: "full",
+               }}
+            />
          </div>
       </nav>
    );

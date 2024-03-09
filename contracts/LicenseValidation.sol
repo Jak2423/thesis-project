@@ -17,10 +17,10 @@ contract LicenseValidation {
 
     mapping (string => License) public licenses;
 
-    event Issued(address issuer, string licenseNum, uint256 timestamp);
+    event Issued(uint256 id, address issuer, string licenseNum, uint256 timestamp);
     event Transferred(address from, address to, string licenseNum, uint256 timestamp);
 
-    modifier onlyLicenseOwner(string memory _licenseNum) {
+    modifier onlyOwner(string memory _licenseNum) {
         require(licenses[_licenseNum].licenseOwner == msg.sender, "You are not the owner of this license");
         _;
     }
@@ -29,10 +29,10 @@ contract LicenseValidation {
         id = 0;
     }
 
-    function addLicense(string memory _licenseNum, string memory _licenseName, uint256 _expireDate, string memory _desc) public returns (uint256) {
+    function addLicense(string memory _licenseNum, string memory _licenseName, uint256 _expireDate, string memory _desc) public  {
         License memory lic = licenses[_licenseNum];
 
-        require(lic.id == 0, "Certificate already registered");
+        require(lic.id == 0, "License already registered");
         require(_expireDate == 0 || block.timestamp < _expireDate, "Expire date can't be past");
 
         lic.id = ++id;
@@ -46,11 +46,10 @@ contract LicenseValidation {
         licenses[_licenseNum] = lic;
         licenseNumbers.push(_licenseNum);
 
-        emit Issued(msg.sender, _licenseNum, block.timestamp);
-        return lic.id;
+        emit Issued(lic.id, msg.sender, _licenseNum, block.timestamp);
     }
 
-    function transferLicense(address _newOwner, string memory _licenseNum) public onlyLicenseOwner(_licenseNum) {
+    function transferLicense(address _newOwner, string memory _licenseNum) public onlyOwner(_licenseNum) {
         License storage lic = licenses[_licenseNum];
 
         lic.licenseOwner = _newOwner;
@@ -94,9 +93,7 @@ contract LicenseValidation {
         return userLicenses;
     }
 
-    function isLicenseExpired(string memory _licenseNum) view public returns (bool) {
-        License memory lic = licenses[_licenseNum];
-
-        return lic.expireDate != 0 && block.timestamp >= lic.expireDate;
+    function isLicenseValid(string memory _licenseNum) view public returns (bool) {
+        return licenses[_licenseNum].id != 0;
     }
 }
