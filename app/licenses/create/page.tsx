@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/popover";
 import Spinner from "@/components/ui/spinner";
 import { contractAddress } from "@/contracts/constants";
-import { cn } from "@/lib/utils";
+import { calculateHash, cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, CheckCircledIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
@@ -50,7 +50,7 @@ const formSchema = z.object({
    description: z.string().min(2, {
       message: "Лицензийн дэлгэрэнгүй тайлбар оруулна уу.",
    }),
-   // licFile: z.instanceof(File, { message: "dwf" }),
+   licFile: z.instanceof(File, { message: "dwf" }),
    expireDate: z.date({
       required_error: "Лицензийн дуусах огноог оруулна уу.",
    }),
@@ -58,6 +58,8 @@ const formSchema = z.object({
 
 export default function Page() {
    const [hasError, setHasError] = useState(false);
+   const [pdfHash, setPdfHash] = useState<string | null>(null);
+   const [file, setFile] = useState<File | null>(null);
    const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
    const { writeContract, isPending, error, data: hash } = useWriteContract();
@@ -76,11 +78,17 @@ export default function Page() {
    });
 
    function handleUploadFile(event: ChangeEvent<HTMLInputElement>) {
-      const fileList = event.target.files;
+      const selectedFile = event.target.files && event.target.files[0];
+      if (selectedFile) {
+         setFile(selectedFile);
 
-      if (fileList && fileList.length > 0) {
-         const file = fileList[0];
-         setUploadedFile(file);
+         const reader = new FileReader();
+         reader.onload = async () => {
+            const buffer = new Uint8Array(reader.result as ArrayBuffer);
+            const fileHash = calculateHash(buffer);
+            setPdfHash(fileHash);
+         };
+         reader.readAsArrayBuffer(selectedFile);
       }
    }
 

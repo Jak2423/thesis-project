@@ -14,3 +14,13 @@ export type NewLicense = {
    description: string,
    expireDate: number,
 }
+
+export interface FileResult {
+   file: File;
+   metadata: {
+      name: string;
+      type: string;
+      size: number;
+      lastModified: number;
+   };
+}

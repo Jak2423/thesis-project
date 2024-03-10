@@ -15,8 +15,8 @@ export default function RootLayout({
    children: React.ReactNode;
 }>) {
    return (
-      <html lang="en" className="dark">
-         <body className="bg-gray-950 ">
+      <html lang="en" className="dark" suppressHydrationWarning>
+         <body className="bg-gray-950">
             <Providers>
                <div className="relative flex min-h-screen w-full flex-col items-center leading-6 text-white">
                   <svg

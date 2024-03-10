@@ -1,20 +1,6 @@
 const { ethers } = require("hardhat");
 const fs = require("fs");
 
-async function deployContract() {
-   let contract;
-   try {
-      contract = await ethers.deployContract("LicenseValidation");
-      await contract.waitForDeployment();
-
-      console.log("Contracts deployed successfully.");
-      return contract;
-   } catch (error) {
-      console.error("Error deploying contracts:", error);
-      throw error;
-   }
-}
-
 async function saveContractAddress(contract) {
    try {
       const address = JSON.stringify(
@@ -47,12 +33,13 @@ async function main() {
    let contract;
 
    try {
-      contract = await deployContract();
+      contract = await ethers.deployContract("LicenseValidation");
+      await contract.waitForDeployment();
       await saveContractAddress(contract);
 
-      console.log("Contract deployment completed successfully.");
+      console.log("Contracts deployed successfully.");
    } catch (error) {
-      console.error("Unhandled error:", error);
+      console.error("Error deploying contracts:", error);
    }
 }
 
