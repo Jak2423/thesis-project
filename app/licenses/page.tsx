@@ -10,7 +10,7 @@ import {
    TableRow,
 } from "@/components/ui/table";
 import { contractAddress } from "@/contracts/constants";
-import { License } from "@/lib/type.dt";
+import { License } from "@/lib/type";
 import { convertTimestampToDate } from "@/lib/utils";
 import { format } from "date-fns";
 
@@ -20,11 +20,11 @@ export default function Page() {
    const { data: licenses, isLoading } = useReadContract({
       address: contractAddress,
       abi: licenseValidationAbi.abi,
-      functionName: "getAllLicenses",
-   }) as { data: License[]; isLoading: boolean };
+      functionName: "getLicenses",
+   }) as { data: License[]; isLoading: boolean; error: any };
 
    return (
-      <main className="mx-auto mb-16 flex w-full flex-col items-start lg:max-w-screen-lg">
+      <main className="mx-auto mb-16 flex w-full flex-col items-start px-8 md:px-0 lg:max-w-screen-lg">
          <Table>
             <TableHeader>
                <TableRow>
@@ -32,6 +32,7 @@ export default function Page() {
                   <TableHead>Нэр</TableHead>
                   <TableHead>Баталгаажуулагч</TableHead>
                   <TableHead>Лицензийн тайлбар</TableHead>
+                  <TableHead>Үүсгэсэн огноо</TableHead>
                   <TableHead>Дуусах огноо</TableHead>
                </TableRow>
             </TableHeader>
@@ -46,9 +47,16 @@ export default function Page() {
                         <TableCell>{l.licenseOwner}</TableCell>
                         <TableCell>{l.description}</TableCell>
                         <TableCell>
+                           {" "}
+                           {format(
+                              convertTimestampToDate(Number(l.issuedDate)),
+                              "P",
+                           )}
+                        </TableCell>
+                        <TableCell>
                            {format(
                               convertTimestampToDate(Number(l.expireDate)),
-                              "PPP",
+                              "P",
                            )}
                         </TableCell>
                      </TableRow>

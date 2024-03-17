@@ -41,7 +41,7 @@ import {
 import { z } from "zod";
 
 const formSchema = z.object({
-   licenseNum: z.string().min(2, {
+   licenseNum: z.string().min(4, {
       message: "Лицензийн дугаар оруулна уу.",
    }),
    licenseName: z.string().min(2, {
@@ -50,7 +50,7 @@ const formSchema = z.object({
    description: z.string().min(2, {
       message: "Лицензийн дэлгэрэнгүй тайлбар оруулна уу.",
    }),
-   licFile: z.instanceof(File, { message: "dwf" }),
+   // licFile: z.instanceof(File, { message: "dwf" }),
    expireDate: z.date({
       required_error: "Лицензийн дуусах огноог оруулна уу.",
    }),
@@ -92,7 +92,7 @@ export default function Page() {
       }
    }
 
-   async function onSubmit(data: z.infer<typeof formSchema>) {
+   function onSubmit(data: z.infer<typeof formSchema>) {
       if (isConnected) {
          writeContract({
             abi: licenseValidationAbi.abi,
@@ -101,7 +101,7 @@ export default function Page() {
             args: [
                data.licenseNum,
                data.licenseName,
-               data.expireDate.getTime(),
+               data.expireDate.getTime() / 1000,
                data.description,
             ],
          });
@@ -117,9 +117,9 @@ export default function Page() {
    }, [error]);
 
    return (
-      <main className="mx-auto flex w-full flex-col items-start lg:max-w-screen-lg">
+      <main className="mx-auto flex w-full flex-col items-start px-8 lg:max-w-screen-lg lg:px-0">
          {isLoading && (
-            <Alert className="fixed bottom-2.5 right-2.5 w-1/3">
+            <Alert className="fixed bottom-2.5 left-2.5 right-2.5 w-auto md:left-auto md:w-1/3">
                <Spinner className="h-5 w-5" />
                <AlertTitle>Баталгаажуулж байна</AlertTitle>
                <AlertDescription>
@@ -128,14 +128,14 @@ export default function Page() {
             </Alert>
          )}
          {isSuccess && (
-            <Alert className="fixed bottom-2.5 right-2.5 w-1/3">
+            <Alert className="fixed bottom-2.5 left-2.5 right-2.5 w-auto md:w-1/3">
                <CheckCircledIcon className="h-5 w-5" />
                <AlertTitle>Амжилттай</AlertTitle>
                <AlertDescription>Лиценз амжилттай үүсгэгдлээ.</AlertDescription>
             </Alert>
          )}
          {isError && (
-            <Alert className="fixed bottom-2.5 right-2.5 w-1/3">
+            <Alert className="fixed bottom-2.5 left-2.5 right-2.5 w-auto md:w-1/3">
                <CheckCircledIcon className="h-5 w-5" />
                <AlertTitle>Алдаа</AlertTitle>
                <AlertDescription>
@@ -146,7 +146,7 @@ export default function Page() {
          {error && (
             <Dialog open={hasError} onOpenChange={setHasError}>
                <DialogContent className="dark:text-gray-200">
-                  <DialogHeader>
+                  <DialogHeader className=" overflow-auto text-ellipsis text-wrap">
                      <DialogTitle>{error?.name}</DialogTitle>
                      <DialogDescription>{error?.message}</DialogDescription>
                   </DialogHeader>
@@ -156,7 +156,7 @@ export default function Page() {
          <Form {...form}>
             <form
                onSubmit={form.handleSubmit(onSubmit)}
-               className="w-2/3 space-y-8"
+               className="w-full space-y-8 md:w-2/3"
             >
                <FormField
                   control={form.control}
@@ -229,7 +229,7 @@ export default function Page() {
                                  <Button
                                     variant={"outline"}
                                     className={cn(
-                                       "w-[240px] pl-3 text-left font-normal",
+                                       "w-full pl-3 text-left font-normal md:w-[240px]",
                                        !field.value && "text-muted-foreground",
                                     )}
                                  >

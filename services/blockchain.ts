@@ -1,6 +1,6 @@
 import licenseValidationAbi from '@/artifacts/contracts/LicenseValidation.sol/LicenseValidation.json'
 import address from '@/contracts/contractAddress.json'
-import { License, NewLicense } from '@/lib/type.dt'
+import { License, NewLicense } from '@/lib/type'
 import { ethers } from 'ethers'
 
 const toWei = (num: number) => ethers.parseEther(num.toString())

@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function convertTimestampToDate(timestamp: number): Date {
-   const date = new Date(timestamp);
+   const date = new Date(timestamp * 1000);
 
    return date;
 }
