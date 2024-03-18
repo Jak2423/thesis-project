@@ -62,7 +62,13 @@ export default function Page() {
    const [file, setFile] = useState<File | null>(null);
    const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-   const { writeContract, isPending, error, data: hash } = useWriteContract();
+   const {
+      writeContract,
+      isPending,
+      error,
+      data: hash,
+      isError: issueError,
+   } = useWriteContract();
    const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
       hash,
    });
@@ -256,13 +262,9 @@ export default function Page() {
                      </FormItem>
                   )}
                />
-               {isPending ? (
-                  <p>loading...</p>
-               ) : (
-                  <Button type="submit" size={"lg"}>
-                     Үүсгэх
-                  </Button>
-               )}
+               <Button type="submit" size={"lg"} disabled={isPending}>
+                  Үүсгэх
+               </Button>
             </form>
          </Form>
       </main>

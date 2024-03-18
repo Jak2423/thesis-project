@@ -8,7 +8,7 @@ const fromWei = (num: number) => ethers.formatEther(num)
 
 let ethereum: any
 
-if (typeof window !== 'undefined') ethereum = (window as any).ethereum
+if (typeof window !== 'undefined') ethereum = window.ethereum
 
 async function getEthereumContracts() {
    const accounts = await ethereum?.request?.({ method: 'eth_accounts' })
