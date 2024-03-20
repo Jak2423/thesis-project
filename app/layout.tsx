@@ -2,7 +2,6 @@ import GridPattern from "@/components/ui/grid-patter";
 import { Providers } from "@/services/provider";
 import "@rainbow-me/rainbowkit/styles.css";
 import type { Metadata } from "next";
-import Navbar from "../components/navbar";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,9 +18,8 @@ export default function RootLayout({
       <html lang="en" className="dark" suppressHydrationWarning>
          <body className="bg-gray-950">
             <Providers>
-               <div className="relative flex min-h-screen w-full flex-col items-center leading-6 text-white">
+               <div className="relative flex h-full min-h-screen w-full flex-col items-center leading-6 text-white">
                   <GridPattern />
-                  <Navbar />
                   {children}
                </div>
             </Providers>

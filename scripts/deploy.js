@@ -33,7 +33,7 @@ async function deployContract() {
    let contract;
 
    try {
-      contract = await ethers.deployContract("LicenseValidation");
+      contract = await ethers.deployContract("LicenseMarketplace");
       await contract.waitForDeployment();
 
       console.log("Contracts deployed successfully.");

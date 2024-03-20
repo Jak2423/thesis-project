@@ -15,7 +15,7 @@ contract LicenseMarketplace {
         uint256 createdAt;
     }
 
-    struct Certificate {
+    struct License {
         uint256 id;
         address owner;
         string fileName;
@@ -37,16 +37,16 @@ contract LicenseMarketplace {
     }
 
     mapping(address => File[]) private userFiles;
-    mapping (address => Certificate[]) private fileCertificates;
+    mapping (address => License[]) private fileLicenses;
     mapping (address => User) private users;
 
     File[] public publicFiles;
-    User[] registeredUsers;
+    User[] private registeredUsers;
 
     uint256 public fileId;
 
     event FileShared(address indexed  owner, string fileName, string fileHash, bool isPublic);
-    event FileCertificate(address indexed  owner, address indexed  buyer, string fileName, string fileHash);
+    event FileLicense(address indexed  owner, address indexed  buyer, string fileName, string fileHash);
     event userSignedUp(address indexed userAddress, string username);
     event userLoggedIn(address indexed userAddress, string username);
 
@@ -65,8 +65,7 @@ contract LicenseMarketplace {
     }
 
     function createFile(string memory _fileName, string memory _description, string memory _category,
-        string memory _fileHash, bool  _isPublic) external onlyRegisteredUser{
-        // User storage user =  users[msg.sender];
+        string memory _fileHash, bool  _isPublic) external{
         fileId++;
         uint256 newId = fileId;
 
@@ -89,9 +88,9 @@ contract LicenseMarketplace {
         emit FileShared(msg.sender, _fileName, _fileHash, _isPublic);
     }
 
-    function issueCertificate(address _owner, uint256 _id, string memory _fileName, string memory _description, string memory _category,
-        string memory _fileHash, bool  _isPublic) external onlyRegisteredUser{
-        Certificate memory newFile = Certificate({
+    function issueLicense(address _owner, uint256 _id, string memory _fileName, string memory _description, string memory _category,
+        string memory _fileHash, bool  _isPublic) external {
+        License memory newFile = License({
             id: _id,
             owner: _owner,
             fileName: _fileName,
@@ -102,8 +101,8 @@ contract LicenseMarketplace {
             createdAt: block.timestamp
         });
 
-        fileCertificates[msg.sender].push(newFile);
-        emit FileCertificate(_owner, msg.sender, _fileName, _fileHash);
+        fileLicenses[msg.sender].push(newFile);
+        emit FileLicense(_owner, msg.sender, _fileName, _fileHash);
     }
 
     function getAllPublicFiles() external view returns(File[] memory) {
@@ -114,8 +113,8 @@ contract LicenseMarketplace {
         return userFiles[msg.sender];
     }
 
-    function getAllUserCertificates() external view returns(Certificate[] memory) {
-        return fileCertificates[msg.sender];
+    function getAllUserLicenses() external view returns(License[] memory) {
+        return fileLicenses[msg.sender];
     }
 
     function signUp(string memory _firstname, string memory _lastname, string memory _username, string memory _email,
@@ -155,5 +154,22 @@ contract LicenseMarketplace {
 
     function getAllRegisterdUsers() public view returns(User[] memory) {
         return registeredUsers;
+    }
+
+    function getPublicFilesExceptUser() external view returns (File[] memory) {
+        uint256 senderFilesCount = userFiles[msg.sender].length;
+        uint256 totalPublicFilesCount = publicFiles.length;
+
+        File[] memory result = new File[](totalPublicFilesCount - senderFilesCount);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < totalPublicFilesCount; i++) {
+            if (publicFiles[i].owner != msg.sender) {
+                result[index] = publicFiles[i];
+                index++;
+            }
+        }
+
+        return result;
     }
 }

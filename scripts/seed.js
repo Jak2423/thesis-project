@@ -13,15 +13,15 @@ async function seedLicenses() {
       const { contractAddress: LicenseValidContract } =
          JSON.parse(contractAddrJson);
 
-      const licenseValidationContract = await ethers.getContractAt(
-         "LicenseValidation",
+      const LicenseMarketplaceContract = await ethers.getContractAt(
+         "LicenseMarketplace",
          LicenseValidContract,
       );
 
       const licenses = generateLicenses(licensesCount);
 
       for (const license of licenses) {
-         const tx = await licenseValidationContract.addLicense(
+         const tx = await LicenseMarketplaceContract.addLicense(
             license.licenseNum,
             license.licenseName,
             license.expireDate,
@@ -32,7 +32,7 @@ async function seedLicenses() {
          console.log(`License ${license.licenseNum} added successfully`);
       }
 
-      console.log("Licenses seeded successfully!");
+      console.log("Contract seeded successfully!");
    } catch (error) {
       console.error("Error seeding licenses:", error);
    }

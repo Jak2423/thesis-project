@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
-export default function Navbar() {
+export default function Header() {
    const pathname = usePathname();
    const [isOpenMenu, setIsOpenMenu] = useState(false);
 
@@ -17,7 +17,7 @@ export default function Navbar() {
    }, [pathname]);
 
    return (
-      <nav className=" flex w-full flex-col justify-center px-8 py-8 lg:px-0">
+      <header className=" flex w-full flex-col justify-center px-8 py-8 lg:px-0">
          <div className="mx-auto flex w-full flex-wrap items-center justify-between gap-y-4 lg:max-w-screen-lg ">
             <Link href={"/"}>
                <span className="text-xl font-semibold uppercase tracking-widest">
@@ -40,19 +40,24 @@ export default function Navbar() {
                   },
                )}
             >
-               <Link href={"/licenses"}>
+               <Link href={"/dashboard/drive"}>
                   <span className="text-sm text-gray-200 hover:opacity-70">
-                     Лицензүүд
+                     Drive
                   </span>
                </Link>
-               <Link href={"/licenses/add"}>
+               <Link href={"/dashboard/files"}>
                   <span className="text-sm text-gray-200 hover:opacity-70">
-                     Лиценз Үүсгэх
+                     Public Files
+                  </span>
+               </Link>
+               <Link href={"/dashboard/files/new"}>
+                  <span className="text-sm text-gray-200 hover:opacity-70">
+                     New File
                   </span>
                </Link>
                <ConnectButton showBalance={false} />
             </div>
          </div>
-      </nav>
+      </header>
    );
 }

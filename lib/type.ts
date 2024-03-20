@@ -8,19 +8,13 @@ export type License = {
    licenseOwner: string,
 }
 
-export type NewLicense = {
-   licenseNum: string
-   licenseName: string,
+export type UploadedFile = {
+   id: number,
+   owner: string,
+   fileName: string,
    description: string,
-   expireDate: number,
-}
-
-export interface FileResult {
-   file: File;
-   metadata: {
-      name: string;
-      type: string;
-      size: number;
-      lastModified: number;
-   };
+   category: string,
+   fileHash: string,
+   isPublic: boolean,
+   createdAt: number,
 }

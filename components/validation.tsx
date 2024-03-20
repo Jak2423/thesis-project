@@ -1,6 +1,6 @@
 "use client";
 
-import licenseValidationAbi from "@/artifacts/contracts/LicenseValidation.sol/LicenseValidation.json";
+import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
 import {
    Dialog,
    DialogContent,
