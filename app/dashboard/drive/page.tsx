@@ -33,8 +33,8 @@ export default function Page() {
    return (
       <main className="flex w-full flex-col items-start px-8">
          <ScreenHeader title="My Drive" />
-         <div className="grid w-full grid-cols-5 gap-x-4">
-            {!isLoading &&
+         <div className="grid w-full grid-cols-2 gap-x-4 md:grid-cols-4 lg:grid-cols-5">
+            {userFiles &&
                userFiles.map((f, i) => (
                   <Card
                      className="w-full transition-all duration-150 ease-in-out hover:opacity-70"

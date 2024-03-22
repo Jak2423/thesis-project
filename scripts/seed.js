@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 const fs = require("fs");
 const { faker } = require("@faker-js/faker");
 
-const licensesCount = 3;
+const filesCount = 3;
 
 async function seedLicenses() {
    try {
@@ -18,18 +18,19 @@ async function seedLicenses() {
          LicenseValidContract,
       );
 
-      const licenses = generateLicenses(licensesCount);
+      const files = generateLicenses(filesCount);
 
-      for (const license of licenses) {
-         const tx = await LicenseMarketplaceContract.addLicense(
-            license.licenseNum,
-            license.licenseName,
-            license.expireDate,
-            license.description,
+      for (const file of files) {
+         const tx = await LicenseMarketplaceContract.createFile(
+            file.fileName,
+            file.expireDate,
+            file.category,
+            file.fileHash,
+            file.isPublic,
             { gasLimit: 300000 },
          );
          await tx.wait();
-         console.log(`License ${license.licenseNum} added successfully`);
+         console.log(`File ${file.fileName} added successfully`);
       }
 
       console.log("Contract seeded successfully!");
@@ -39,20 +40,21 @@ async function seedLicenses() {
 }
 
 function generateLicenses(count) {
-   const licenses = [];
+   const files = [];
 
    for (let i = 0; i < count; i++) {
-      const license = {
-         licenseNum: faker.vehicle.vin(),
-         licenseName: faker.word.words(3),
-         expireDate: faker.date.future().getTime(),
+      const file = {
+         fileName: faker.word.noun(2),
          description: faker.lorem.sentence(),
+         category: "PDF",
+         fileHash: "QmRPq61WNSuQTr4Cubenfar26qcTvnAUccm93Lj1zTAjAB",
+         isPublic: true,
       };
 
-      licenses.push(license);
+      files.push(file);
    }
 
-   return licenses;
+   return files;
 }
 
 seedLicenses()

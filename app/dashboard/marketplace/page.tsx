@@ -57,7 +57,7 @@ export default function Page() {
    });
 
    const {
-      data: MarketFiles,
+      data: marketFiles,
       isLoading: isReadLoading,
       error,
    } = useReadContract({
@@ -87,16 +87,15 @@ export default function Page() {
    }
 
    useEffect(() => {
-      console.log(error);
       setHasError(true);
    }, [error]);
 
    return (
-      <main className="flex w-2/4 flex-col items-start px-8">
+      <main className="flex w-full flex-col items-start px-8">
          <ScreenHeader title="Marketplace" />
          <div className="flex w-full flex-col gap-y-4">
-            {!isReadLoading &&
-               MarketFiles.map((file, i) => (
+            {marketFiles &&
+               marketFiles.map((file, i) => (
                   <div
                      className="flex w-full items-center gap-x-2 border-b border-gray-800 py-4"
                      key={i}
@@ -110,10 +109,10 @@ export default function Page() {
                               {file.fileName}
                            </h3>
                         </Link>
-                        <h4 className="truncate text-sm leading-none tracking-tight">
+                        <h4 className="text-ellipsis text-sm leading-none tracking-tight">
                            Owner: {formatAddress(file.owner)}
                         </h4>
-                        <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                        <p className="line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
                            {file.description}
                         </p>
                      </div>

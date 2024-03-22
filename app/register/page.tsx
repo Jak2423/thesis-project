@@ -16,8 +16,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const formSchema = z.object({
+   name: z.string().min(2),
    email: z.string().email(),
    password: z.string().min(6),
+   confirmPassword: z.string().min(6),
 });
 
 export default function Page() {
@@ -36,10 +38,10 @@ export default function Page() {
          <div className="w-full rounded-lg border border-gray-800 bg-gray-900 px-12 py-16">
             <div className="mb-8 flex flex-col space-y-1.5">
                <h3 className="text-lg font-semibold leading-none tracking-tight">
-                  Login
+                  Register
                </h3>
                <p className="text-muted text-sm">
-                  Enter your email and password to login.
+                  Create a new account to access the application.
                </p>
             </div>
             <Form {...form}>
@@ -47,6 +49,19 @@ export default function Page() {
                   className="flex w-full flex-col items-start space-y-6"
                   onSubmit={form.handleSubmit(onSubmit)}
                >
+                  <FormField
+                     control={form.control}
+                     name="name"
+                     render={({ field }) => (
+                        <FormItem className="w-full">
+                           <FormLabel>Name</FormLabel>
+                           <FormControl>
+                              <Input {...field} className=" bg-gray-950" />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
                   <FormField
                      control={form.control}
                      name="email"
@@ -60,37 +75,56 @@ export default function Page() {
                         </FormItem>
                      )}
                   />
-                  <FormField
-                     control={form.control}
-                     name="password"
-                     render={({ field }) => (
-                        <FormItem className="w-full">
-                           <FormLabel>Password</FormLabel>
-                           <FormControl>
-                              <Input
-                                 type="password"
-                                 {...field}
-                                 className="bg-gray-950"
-                              />
-                           </FormControl>
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
+                  <div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2">
+                     <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                           <FormItem className="w-full">
+                              <FormLabel>Password</FormLabel>
+                              <FormControl>
+                                 <Input
+                                    {...field}
+                                    type="password"
+                                    className="bg-gray-950"
+                                 />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+                     <FormField
+                        control={form.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                           <FormItem className="w-full">
+                              <FormLabel>Confirm Password</FormLabel>
+                              <FormControl>
+                                 <Input
+                                    {...field}
+                                    type="password"
+                                    className="bg-gray-950"
+                                 />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+                  </div>
                   <Button
                      type="submit"
                      size={"lg"}
                      className="mb-0 w-full px-0"
                   >
-                     Log in
+                     Register
                   </Button>
                   <span className="text-muted flex items-center gap-x-1 text-sm">
                      Already have account ?
                      <Link
-                        href="/register"
+                        href="/login"
                         className="hover:text-gray-50 hover:underline"
                      >
-                        Register
+                        Login
                      </Link>
                   </span>
                </form>

@@ -18,6 +18,9 @@ const config = {
          },
       },
       extend: {
+         textColor: {
+            muted: '#a1a1aa'
+         },
          colors: {
             gray: {
                0: '#ffffff',

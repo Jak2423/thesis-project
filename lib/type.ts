@@ -1,11 +1,13 @@
 export type License = {
-   id: number,
-   licenseNum: string
-   licenseName: string,
-   issuedDate: number,
-   expireDate: number,
+   licenseNumber: number,
+   fileId: string,
+   owner: string,
+   fileName: string,
    description: string,
-   licenseOwner: string,
+   category: string,
+   fileHash: string,
+   isPublic: boolean,
+   createdAt: number,
 }
 
 export type UploadedFile = {

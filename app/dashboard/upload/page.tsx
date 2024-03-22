@@ -28,9 +28,11 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
    useAccount,
+   useConnect,
    useWaitForTransactionReceipt,
    useWriteContract,
 } from "wagmi";
+import { injected } from "wagmi/connectors";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -47,6 +49,7 @@ const formSchema = z.object({
 export default function Page() {
    const [hasError, setHasError] = useState(false);
    const [file, setFile] = useState<File | null>(null);
+   const { connect } = useConnect();
 
    const {
       writeContract,
@@ -98,12 +101,17 @@ export default function Page() {
    }
 
    async function onSubmit(data: z.infer<typeof formSchema>) {
-      if (isConnected) {
-         try {
-            if (!file) {
-               return;
-            }
-            const res = await pinFileToIPFS(file);
+      if (!isConnected) {
+         connect({ connector: injected() });
+      }
+      try {
+         if (!file) {
+            return;
+         }
+         const res = await pinFileToIPFS(file);
+         console.log(res);
+
+         if (!res.isDuplicate) {
             writeContract({
                abi: licenseValidationAbi.abi,
                address: contractAddress,
@@ -120,9 +128,11 @@ export default function Page() {
             if (isSuccess) {
                form.reset();
             }
-         } catch (error) {
-            console.error(error);
+         } else {
+            alert("This file has already been uploaded.");
          }
+      } catch (error) {
+         console.error(error);
       }
    }
 
@@ -136,7 +146,7 @@ export default function Page() {
          {isLoading && (
             <Alert className="fixed bottom-2.5 left-2.5 right-2.5 w-auto md:left-auto md:w-1/3">
                <Spinner className="h-5 w-5" />
-               <AlertTitle>Баталгаажуу</AlertTitle>
+               <AlertTitle>Баталгаажуулалт</AlertTitle>
                <AlertDescription>
                   Баталгаажуулахыг хүлээж байна...
                </AlertDescription>

@@ -28,7 +28,7 @@ export default function Page() {
    }) as { data: UploadedFile[]; isLoading: boolean; error: any };
 
    return (
-      <main className="mx-auto mb-16 flex w-full flex-col items-start px-8 md:px-0 lg:max-w-screen-lg">
+      <main className="flex w-full flex-col items-start px-8">
          <Table>
             <TableHeader>
                <TableRow>
@@ -38,7 +38,7 @@ export default function Page() {
                   <TableHead>Owner</TableHead>
                </TableRow>
             </TableHeader>
-            {!isLoading && (
+            {publicFiles && (
                <TableBody>
                   {publicFiles.map((f, i) => (
                      <TableRow key={i}>
@@ -54,7 +54,9 @@ export default function Page() {
                         <TableCell className="uppercase">
                            {f.category}
                         </TableCell>
-                        <TableCell>{f.description}</TableCell>
+                        <TableCell className="line-clamp-2 text-ellipsis">
+                           {f.description}
+                        </TableCell>
                         <TableCell>{formatAddress(f.owner)}</TableCell>
                      </TableRow>
                   ))}

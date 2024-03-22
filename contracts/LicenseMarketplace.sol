@@ -16,7 +16,8 @@ contract LicenseMarketplace {
     }
 
     struct License {
-        uint256 id;
+        uint256 licenseNumber;
+        uint256 fileId;
         address owner;
         string fileName;
         string description;
@@ -39,6 +40,8 @@ contract LicenseMarketplace {
     mapping(address => File[]) private userFiles;
     mapping (address => License[]) private fileLicenses;
     mapping (address => User) private users;
+    mapping(uint256 => bool) public usedLicenses;
+
 
     File[] public publicFiles;
     User[] private registeredUsers;
@@ -64,8 +67,7 @@ contract LicenseMarketplace {
         owner = msg.sender;
     }
 
-    function createFile(string memory _fileName, string memory _description, string memory _category,
-        string memory _fileHash, bool  _isPublic) external{
+    function createFile(string memory _fileName, string memory _description, string memory _category,  string memory _fileHash, bool  _isPublic) external{
         fileId++;
         uint256 newId = fileId;
 
@@ -90,8 +92,12 @@ contract LicenseMarketplace {
 
     function issueLicense(address _owner, uint256 _id, string memory _fileName, string memory _description, string memory _category,
         string memory _fileHash, bool  _isPublic) external {
+
+        uint256 licNum = generateUniqueLicense();
+
         License memory newFile = License({
-            id: _id,
+            licenseNumber: licNum,
+            fileId: _id,
             owner: _owner,
             fileName: _fileName,
             description: _description,
@@ -171,5 +177,19 @@ contract LicenseMarketplace {
         }
 
         return result;
+    }
+
+    function generateUniqueLicense() internal returns (uint256) {
+        uint256 randomNumber = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 10**8;
+        uint256 license = (randomNumber + 1) * 10**8;
+
+        while (usedLicenses[license]) {
+            randomNumber = uint256(keccak256(abi.encodePacked(randomNumber, block.timestamp)));
+            license = (randomNumber + 1) * 10**8;
+        }
+
+        usedLicenses[license] = true;
+
+        return license;
     }
 }

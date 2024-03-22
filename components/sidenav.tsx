@@ -40,7 +40,7 @@ export default function SideNav() {
                href={"/dashboard"}
                className="flex h-16 items-center justify-start"
             >
-               <Logo className="size-10" />
+               <Logo className="color size-10 fill-gray-50" />
                <span className="text-2xl font-semibold tracking-tighter">
                   Licens
                </span>
@@ -48,7 +48,7 @@ export default function SideNav() {
          </div>
          <div className="flex flex-col items-start gap-y-4 px-6">
             <Link
-               href="/dashboard/files/new"
+               href="/dashboard/upload"
                className="flex w-full items-center justify-center gap-x-2 rounded-md bg-gray-100 px-4 py-3 text-gray-950 hover:opacity-80"
             >
                <FiUpload className="h-5 w-5" />

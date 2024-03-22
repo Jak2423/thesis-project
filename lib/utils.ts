@@ -12,11 +12,11 @@ export function convertTimestampToDate(timestamp: number): Date {
    return date;
 }
 
-export const formatAddress = (addr: string) => {
+export function formatAddress(addr: string) {
    return `${addr?.substring(0, 7)}...${addr?.substring(addr.length - 4, addr.length)}`;
 };
 
-const calculateFileHash = (file: File): Promise<string> => {
+export function calculateFileHash(file: File): Promise<string> {
    return new Promise((resolve, reject) => {
       const reader = new FileReader();
 
