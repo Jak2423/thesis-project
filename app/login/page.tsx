@@ -38,7 +38,7 @@ export default function Page() {
                <h3 className="text-lg font-semibold leading-none tracking-tight">
                   Login
                </h3>
-               <p className="text-muted text-sm">
+               <p className="text-sm text-muted">
                   Enter your email and password to login.
                </p>
             </div>
@@ -84,7 +84,7 @@ export default function Page() {
                   >
                      Log in
                   </Button>
-                  <span className="text-muted flex items-center gap-x-1 text-sm">
+                  <span className="flex items-center gap-x-1 text-sm text-muted">
                      Already have account ?
                      <Link
                         href="/register"

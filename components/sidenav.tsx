@@ -34,13 +34,13 @@ export default function SideNav() {
    const pathname = usePathname();
 
    return (
-      <div className="hidden h-screen flex-col gap-y-4 border-r border-gray-800 bg-gray-950 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72">
-         <div className="mb-4  border-gray-800 px-6">
+      <div className="hidden h-screen flex-col gap-y-4 border-r border-gray-800 bg-gray-950 py-4 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72">
+         <div className="mb-4 gap-x-2 border-gray-800 px-6">
             <Link
                href={"/dashboard"}
                className="flex h-16 items-center justify-start"
             >
-               <Logo className="color size-10 fill-gray-50" />
+               <Logo className="size-10 fill-gray-50" />
                <span className="text-2xl font-semibold tracking-tighter">
                   Licens
                </span>

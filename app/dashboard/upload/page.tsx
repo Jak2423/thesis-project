@@ -21,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Spinner from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
-import { contractAddress } from "@/contracts/constants";
+import licenseValidationContract from "@/contracts/contractAddress.json";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -109,12 +109,12 @@ export default function Page() {
             return;
          }
          const res = await pinFileToIPFS(file);
-         console.log(res);
 
          if (!res.isDuplicate) {
             writeContract({
                abi: licenseValidationAbi.abi,
-               address: contractAddress,
+               address:
+                  licenseValidationContract.contractAddress as `0x${string}`,
                functionName: "createFile",
                args: [
                   data.fileName,
@@ -137,7 +137,6 @@ export default function Page() {
    }
 
    useEffect(() => {
-      console.log(error);
       setHasError(true);
    }, [error]);
 

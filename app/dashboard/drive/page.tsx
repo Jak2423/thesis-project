@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import PdfIcon from "@/components/ui/pdf-icon";
 import ScreenHeader from "@/components/ui/screen-header";
-import { contractAddress } from "@/contracts/constants";
+import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
 
@@ -24,7 +24,7 @@ export default function Page() {
       isLoading,
       error,
    } = useReadContract({
-      address: contractAddress,
+      address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
       functionName: "getAllUserFiles",
       account: address,

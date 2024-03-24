@@ -9,7 +9,7 @@ import {
    TableHeader,
    TableRow,
 } from "@/components/ui/table";
-import { contractAddress } from "@/contracts/constants";
+import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
 import { formatAddress } from "@/lib/utils";
 
@@ -22,7 +22,7 @@ export default function Page() {
       isLoading,
       error,
    } = useReadContract({
-      address: contractAddress,
+      address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
       functionName: "getAllPublicFiles",
    }) as { data: UploadedFile[]; isLoading: boolean; error: any };

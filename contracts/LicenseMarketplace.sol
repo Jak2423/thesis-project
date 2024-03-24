@@ -191,5 +191,18 @@ contract LicenseMarketplace {
         usedLicenses[license] = true;
 
         return license;
+   }
+
+   function validateLicense(uint256 licenseNumber) external view returns (bool) {
+        return usedLicenses[licenseNumber];
+   }
+
+   function getPublicFileById(uint256 _id) external view returns (File memory) {
+        for (uint256 i = 0; i < publicFiles.length; i++) {
+            if (publicFiles[i].id == _id) {
+                return publicFiles[i];
+            }
+        }
+        revert("Public file not found");
     }
 }

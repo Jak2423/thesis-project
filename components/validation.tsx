@@ -8,7 +8,7 @@ import {
    DialogHeader,
    DialogTitle,
 } from "@/components/ui/dialog";
-import { contractAddress } from "@/contracts/constants";
+import licenseValidationContract from "@/contracts/contractAddress.json";
 import { useState } from "react";
 import { useReadContract } from "wagmi";
 
@@ -17,9 +17,9 @@ export default function Validation() {
    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
    const { data: isValid, refetch } = useReadContract({
-      address: contractAddress,
+      address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
-      functionName: "isLicenseValid",
+      functionName: "validateLicense",
       args: [licenseNum],
    });
 

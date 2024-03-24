@@ -24,14 +24,14 @@ import {
 import PdfIcon from "@/components/ui/pdf-icon";
 import ScreenHeader from "@/components/ui/screen-header";
 import Spinner from "@/components/ui/spinner";
-import { contractAddress } from "@/contracts/constants";
+import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
 import { formatAddress } from "@/lib/utils";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
+import saveAs from "file-saver";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FiShoppingCart } from "react-icons/fi";
-
 import {
    useAccount,
    useReadContract,
@@ -41,16 +41,10 @@ import {
 
 export default function Page() {
    const [hasError, setHasError] = useState(false);
-   const { address } = useAccount();
-   const { isConnected } = useAccount();
+   const [fileHash, setFileHash] = useState("");
+   const { address, isConnected } = useAccount();
 
-   const {
-      writeContract,
-      isPending,
-      error: writError,
-      data: hash,
-      isError: issueError,
-   } = useWriteContract();
+   const { writeContract, data: hash } = useWriteContract();
 
    const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
       hash,
@@ -61,7 +55,7 @@ export default function Page() {
       isLoading: isReadLoading,
       error,
    } = useReadContract({
-      address: contractAddress,
+      address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
       functionName: "getPublicFilesExceptUser",
       account: address,
@@ -71,10 +65,10 @@ export default function Page() {
       if (isConnected) {
          writeContract({
             abi: licenseValidationAbi.abi,
-            address: contractAddress,
+            address: licenseValidationContract.contractAddress as `0x${string}`,
             functionName: "issueLicense",
             args: [
-               address,
+               data.owner,
                data.id,
                data.fileName,
                data.description,
@@ -83,12 +77,21 @@ export default function Page() {
                data.isPublic,
             ],
          });
+         setFileHash(data.fileHash);
       }
    }
 
    useEffect(() => {
       setHasError(true);
    }, [error]);
+
+   useEffect(() => {
+      isSuccess &&
+         saveAs(
+            `https://silver-patient-falcon-52.mypinata.cloud/ipfs/${fileHash}`,
+            `licensed.pdf`,
+         );
+   }, [isSuccess]);
 
    return (
       <main className="flex w-full flex-col items-start px-8">
