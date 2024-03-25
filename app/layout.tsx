@@ -1,5 +1,6 @@
 import { Providers } from "@/app/provider";
 import GridPattern from "@/components/ui/grid-patter";
+import { Toaster } from "@/components/ui/toaster";
 import "@rainbow-me/rainbowkit/styles.css";
 import type { Metadata } from "next";
 import "./globals.css";
@@ -20,6 +21,7 @@ export default function RootLayout({
             <Providers>
                <div className="relative flex h-full min-h-screen w-full flex-col items-center leading-6 text-white">
                   <GridPattern />
+                  <Toaster />
                   {children}
                </div>
             </Providers>

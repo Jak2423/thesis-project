@@ -162,36 +162,77 @@ contract LicenseMarketplace {
         return registeredUsers;
     }
 
+   //  function getPublicFilesExceptUser() external view returns (File[] memory) {
+   //      uint256 senderFilesCount = userFiles[msg.sender].length;
+   //      uint256 totalPublicFilesCount = publicFiles.length;
+
+   //      File[] memory result = new File[](totalPublicFilesCount - senderFilesCount);
+   //      uint256 index = 0;
+
+   //      for (uint256 i = 0; i < totalPublicFilesCount; i++) {
+   //          if (publicFiles[i].owner != msg.sender) {
+   //              result[index] = publicFiles[i];
+   //              index++;
+   //          }
+   //      }
+
+   //      return result;
+   //  }
+
     function getPublicFilesExceptUser() external view returns (File[] memory) {
-        uint256 senderFilesCount = userFiles[msg.sender].length;
-        uint256 totalPublicFilesCount = publicFiles.length;
+      uint256 senderFilesCount = userFiles[msg.sender].length;
+      uint256 totalPublicFilesCount = publicFiles.length;
 
-        File[] memory result = new File[](totalPublicFilesCount - senderFilesCount);
-        uint256 index = 0;
+      uint256 excludedFilesCount = senderFilesCount;
+      for (uint256 i = 0; i < fileLicenses[msg.sender].length; i++) {
+         if (fileLicenses[msg.sender][i].isPublic) {
+               excludedFilesCount++;
+         }
+      }
 
-        for (uint256 i = 0; i < totalPublicFilesCount; i++) {
-            if (publicFiles[i].owner != msg.sender) {
-                result[index] = publicFiles[i];
-                index++;
-            }
-        }
+      File[] memory result = new File[](totalPublicFilesCount - excludedFilesCount);
+      uint256 index = 0;
 
-        return result;
-    }
+      for (uint256 i = 0; i < totalPublicFilesCount; i++) {
+         bool isUserFile = false;
+         bool hasUserLicense = false;
+
+         for (uint256 j = 0; j < senderFilesCount; j++) {
+               if (publicFiles[i].id == userFiles[msg.sender][j].id) {
+                  isUserFile = true;
+                  break;
+               }
+         }
+
+         for (uint256 k = 0; k < fileLicenses[msg.sender].length; k++) {
+               if (publicFiles[i].id == fileLicenses[msg.sender][k].fileId) {
+                  hasUserLicense = true;
+                  break;
+               }
+         }
+
+         if (!isUserFile && !hasUserLicense) {
+               result[index] = publicFiles[i];
+               index++;
+         }
+      }
+
+      return result;
+   }
 
     function generateUniqueLicense() internal returns (uint256) {
-        uint256 randomNumber = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 10**8;
-        uint256 license = (randomNumber + 1) * 10**8;
+        uint256 randomNumber = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender)));
+        uint256 license = randomNumber % 10000000000;
 
         while (usedLicenses[license]) {
             randomNumber = uint256(keccak256(abi.encodePacked(randomNumber, block.timestamp)));
-            license = (randomNumber + 1) * 10**8;
+            license = randomNumber % 10000000000;
         }
 
         usedLicenses[license] = true;
 
         return license;
-   }
+    }
 
    function validateLicense(uint256 licenseNumber) external view returns (bool) {
         return usedLicenses[licenseNumber];

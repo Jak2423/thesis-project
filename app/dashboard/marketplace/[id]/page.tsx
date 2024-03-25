@@ -86,6 +86,10 @@ export default function Page({ params }: { params: { id: string } }) {
    }
 
    useEffect(() => {
+      setHasError(true);
+   }, [writeError]);
+
+   useEffect(() => {
       isSuccess &&
          saveAs(
             `https://silver-patient-falcon-52.mypinata.cloud/ipfs/${fileHash}`,
@@ -93,51 +97,15 @@ export default function Page({ params }: { params: { id: string } }) {
          );
    }, [isSuccess]);
 
-   useEffect(() => {
-      setHasError(true);
-   }, [error]);
-
    return (
       <main className="flex h-full w-full flex-col items-start px-8">
-         {isLoading && (
-            <Alert className="fixed bottom-2.5 left-2.5 right-2.5 w-auto md:left-auto md:w-1/3">
-               <Spinner className="h-5 w-5" />
-               <AlertTitle>Баталгаажуулж байна</AlertTitle>
-               <AlertDescription>
-                  Баталгаажуулахыг хүлээж байна...
-               </AlertDescription>
-            </Alert>
-         )}
-         {isSuccess && (
-            <Alert className="fixed bottom-2.5 left-2.5 right-2.5 w-auto md:left-auto md:w-1/3">
-               <CheckCircledIcon className="h-5 w-5" />
-               <AlertTitle>Амжилттай</AlertTitle>
-               <AlertDescription>Лиценз амжилттай үүсгэгдлээ.</AlertDescription>
-            </Alert>
-         )}
-         {isError && (
-            <Alert className="fixed bottom-2.5 left-2.5 right-2.5 w-auto md:w-1/3">
-               <CheckCircledIcon className="h-5 w-5" />
-               <AlertTitle>Алдаа</AlertTitle>
-               <AlertDescription>
-                  Лиценз баталгаажуулахад алдаа гарлаа.
-               </AlertDescription>
-            </Alert>
-         )}
-         {error && (
-            <Dialog open={hasError} onOpenChange={setHasError}>
-               <DialogContent className="dark:text-gray-200">
-                  <DialogHeader className=" overflow-auto text-ellipsis text-wrap">
-                     <DialogTitle>{error?.name}</DialogTitle>
-                     <DialogDescription>{error?.message}</DialogDescription>
-                  </DialogHeader>
-               </DialogContent>
-            </Dialog>
-         )}
          {file && (
             <div className="mb-8 grid w-full grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-3">
                <div className="col-span-1">
-                  <div className="h-96 w-full bg-gray-800"></div>
+                  <iframe
+                     src={`https://silver-patient-falcon-52.mypinata.cloud/ipfs/${file.fileHash}#toolbar=0`}
+                     className="h-[500px] w-full"
+                  />
                </div>
                <div className="col-span-1 md:col-span-2">
                   <h3 className="mb-8 flex items-center text-4xl font-bold">
@@ -198,6 +166,43 @@ export default function Page({ params }: { params: { id: string } }) {
                   </AlertDialog>
                </div>
             </div>
+         )}
+         {isLoading && (
+            <Alert className="fixed bottom-2.5 left-2.5 right-2.5 w-auto md:left-auto md:w-1/3">
+               <Spinner className="h-5 w-5" />
+               <AlertTitle>Баталгаажуулж байна</AlertTitle>
+               <AlertDescription>
+                  Баталгаажуулахыг хүлээж байна...
+               </AlertDescription>
+            </Alert>
+         )}
+         {isSuccess && (
+            <Alert className="fixed bottom-2.5 left-2.5 right-2.5 w-auto md:left-auto md:w-1/3">
+               <CheckCircledIcon className="h-5 w-5" />
+               <AlertTitle>Амжилттай</AlertTitle>
+               <AlertDescription>Лиценз амжилттай үүсгэгдлээ.</AlertDescription>
+            </Alert>
+         )}
+         {isError && (
+            <Alert className="fixed bottom-2.5 left-2.5 right-2.5 w-auto md:w-1/3">
+               <CheckCircledIcon className="h-5 w-5" />
+               <AlertTitle>Алдаа</AlertTitle>
+               <AlertDescription>
+                  Лиценз баталгаажуулахад алдаа гарлаа.
+               </AlertDescription>
+            </Alert>
+         )}
+         {writeError && (
+            <Dialog open={hasError} onOpenChange={setHasError}>
+               <DialogContent className="dark:text-gray-200">
+                  <DialogHeader className=" overflow-auto text-ellipsis text-wrap">
+                     <DialogTitle>{writeError?.name}</DialogTitle>
+                     <DialogDescription>
+                        {writeError?.message}
+                     </DialogDescription>
+                  </DialogHeader>
+               </DialogContent>
+            </Dialog>
          )}
       </main>
    );

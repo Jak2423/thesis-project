@@ -21,10 +21,11 @@ import {
 import { Input } from "@/components/ui/input";
 import Spinner from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/components/ui/use-toast";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
    useAccount,
@@ -50,6 +51,8 @@ export default function Page() {
    const [hasError, setHasError] = useState(false);
    const [file, setFile] = useState<File | null>(null);
    const { connect } = useConnect();
+   const { toast } = useToast();
+   const fileInputRef = useRef<HTMLInputElement>(null);
 
    const {
       writeContract,
@@ -74,11 +77,9 @@ export default function Page() {
 
    function handleUploadFile(event: ChangeEvent<HTMLInputElement>) {
       const selectedFile = event.target.files?.[0];
-      if (!selectedFile) {
-         return;
+      if (selectedFile) {
+         setFile(selectedFile);
       }
-
-      setFile(selectedFile);
    }
 
    async function pinFileToIPFS(file: File): Promise<any> {
@@ -90,14 +91,14 @@ export default function Page() {
          {
             method: "POST",
             headers: {
-               pinata_api_key: `${process.env.NEXT_PUBLIC_PINATA_API_KEY}`,
-               pinata_secret_api_key: `${process.env.NEXT_PUBLIC_PINATA_API_SECRET}`,
+               pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY!,
+               pinata_secret_api_key:
+                  process.env.NEXT_PUBLIC_PINATA_API_SECRET!,
             },
             body: formData,
          },
       );
-      const resData = await res.json();
-      return resData;
+      return res.json();
    }
 
    async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -129,7 +130,14 @@ export default function Page() {
                form.reset();
             }
          } else {
-            alert("This file has already been uploaded.");
+            if (fileInputRef.current) {
+               fileInputRef.current.value = "";
+            }
+
+            toast({
+               variant: "destructive",
+               description: "This file has already been uploaded.",
+            });
          }
       } catch (error) {
          console.error(error);
@@ -222,6 +230,7 @@ export default function Page() {
                            <Input
                               {...field}
                               type="file"
+                              ref={fileInputRef}
                               accept="application/pdf"
                               onChange={handleUploadFile}
                               className="file:text-gray-200"

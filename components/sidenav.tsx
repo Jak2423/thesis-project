@@ -19,7 +19,7 @@ const links = [
       icon: FiShoppingCart,
    },
    {
-      name: "Public files",
+      name: "Recent files",
       href: "/dashboard/files",
       icon: FiGlobe,
    },
