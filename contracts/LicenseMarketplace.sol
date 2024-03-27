@@ -221,7 +221,7 @@ contract LicenseMarketplace {
    }
 
     function generateUniqueLicense() internal returns (uint256) {
-        uint256 randomNumber = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender)));
+        uint256 randomNumber = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender)));
         uint256 license = randomNumber % 10000000000;
 
         while (usedLicenses[license]) {
