@@ -26,3 +26,34 @@ html {
       rgba(255, 255, 255, 0) 40%
    );
 }
+
+.react-pdf__Page__canvas {
+   width: 100% !important;
+   height: auto !important;
+   pointer-events: none;
+}
+
+.react-pdf__Page {
+   pointer-events: none;
+   min-width: 100% !important;
+   min-height: auto !important;
+}
+
+.react-pdf__Page__textContent {
+   pointer-events: none;
+   user-select: none;
+}
+
+@media print {
+   .react-pdf__Page__canvas {
+      display: none;
+   }
+
+   .react-pdf__Page {
+      display: none;
+   }
+
+   .react-pdf__Page__textContent {
+      display: none;
+   }
+}

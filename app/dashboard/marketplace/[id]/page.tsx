@@ -1,6 +1,7 @@
 "use client";
 
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
+import PdfThumbnail from "@/components/pdf-thumbnail";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
    AlertDialog,
@@ -27,9 +28,7 @@ import { UploadedFile } from "@/lib/type";
 import { convertTimestampToDate, formatAddress } from "@/lib/utils";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
-import saveAs from "file-saver";
 import { useEffect, useState } from "react";
-import { FiShoppingCart } from "react-icons/fi";
 import {
    useAccount,
    useReadContract,
@@ -81,7 +80,6 @@ export default function Page({ params }: { params: { id: string } }) {
                data.isPublic,
             ],
          });
-         setFileHash(data.fileHash);
       }
    }
 
@@ -89,22 +87,21 @@ export default function Page({ params }: { params: { id: string } }) {
       setHasError(true);
    }, [writeError]);
 
-   useEffect(() => {
-      isSuccess &&
-         saveAs(
-            `https://silver-patient-falcon-52.mypinata.cloud/ipfs/${fileHash}`,
-            `licensed.pdf`,
-         );
-   }, [isSuccess]);
+   // useEffect(() => {
+   //    isSuccess &&
+   //       saveAs(
+   //          `https://silver-patient-falcon-52.mypinata.cloud/ipfs/${fileHash}`,
+   //          `licensed.pdf`,
+   //       );
+   // }, [isSuccess]);
 
    return (
       <main className="flex h-full w-full flex-col items-start px-8">
          {file && (
             <div className="mb-8 grid w-full grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-3">
                <div className="col-span-1">
-                  <iframe
-                     src={`https://silver-patient-falcon-52.mypinata.cloud/ipfs/${file.fileHash}#toolbar=0`}
-                     className="h-[500px] w-full"
+                  <PdfThumbnail
+                     url={`https://silver-patient-falcon-52.mypinata.cloud/ipfs/${file.fileHash}`}
                   />
                </div>
                <div className="col-span-1 md:col-span-2">
@@ -117,7 +114,7 @@ export default function Page({ params }: { params: { id: string } }) {
                         {formatAddress(file.owner)}
                      </p>
                      <p className="text-lg">
-                        <span className="font-bold">Ангилал: </span>
+                        <span className="font-bold">Төрөл: </span>
                         {file.category}
                      </p>
                      <p className="text-lg">
@@ -134,10 +131,8 @@ export default function Page({ params }: { params: { id: string } }) {
                         <Button
                            variant="outline"
                            size="lg"
-                           className="flex- items-center"
                            disabled={isPending}
                         >
-                           <FiShoppingCart className="mr-2 w-5" />
                            Авах
                         </Button>
                      </AlertDialogTrigger>

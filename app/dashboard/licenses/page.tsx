@@ -25,6 +25,7 @@ import { ArrowRightIcon, DownloadIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import Link from "next/link";
 import { useState } from "react";
 import { TbFileCertificate } from "react-icons/tb";
 
@@ -74,7 +75,11 @@ export default function Page() {
                userLicenses.map((l, i) => (
                   <Card className="w-full" key={i}>
                      <CardHeader>
-                        <CardTitle className="truncate">{l.fileName}</CardTitle>
+                        <CardTitle className="truncate">
+                           <Link href={`/dashboard/preview/${l.fileHash}`}>
+                              {l.fileName}
+                           </Link>
+                        </CardTitle>
                         <CardDescription className="truncate">
                            {l.description}
                         </CardDescription>
@@ -118,7 +123,7 @@ export default function Page() {
                                           </p>
                                           <p className="flex gap-x-4">
                                              <span className="w-32">
-                                                Файлын дугаар:
+                                                Лицензийн дугаар:
                                              </span>
                                              <span className="font-semibold">
                                                 {Number(l.licenseNumber)}
@@ -126,7 +131,7 @@ export default function Page() {
                                           </p>
                                           <p className="flex gap-x-4">
                                              <span className="w-32">
-                                                Файлын хейш:
+                                                Файлын хэш:
                                              </span>
                                              <span className="font-semibold">
                                                 {l.fileHash}

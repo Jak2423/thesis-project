@@ -1,20 +1,17 @@
-import Image from "next/image";
+"use client";
 
-const PDFThumbnail = ({ pdfUrl }: { pdfUrl: string }) => {
-   const loader = ({ src }: { src: string }) => {
-      return `https://pdf-renderer.anthavio.com/render/?url=${encodeURIComponent(src)}&page=1&thumbnailWidth=200`;
-   };
+import { Document, Page, pdfjs } from "react-pdf";
 
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
+export default function PdfThumbnail({ url }: { url: string }) {
    return (
-      <Image
-         src={pdfUrl}
-         alt="PDF Thumbnail"
-         width={200}
-         height={200}
-         unoptimized
-         loader={loader}
-      />
+      <Document file={{ url: url }} onContextMenu={(e) => e.preventDefault()}>
+         <Page
+            pageNumber={1}
+            renderTextLayer={false}
+            renderAnnotationLayer={false}
+         />
+      </Document>
    );
-};
-
-export default PDFThumbnail;
+}

@@ -58,6 +58,7 @@ export default function MobileMenu() {
                <Link
                   href={"/dashboard"}
                   className="flex h-16 items-center justify-start"
+                  onClick={closeMenu}
                >
                   <Logo className="size-10 fill-gray-50" />
                   <span className="text-2xl font-semibold tracking-tighter">
