@@ -103,7 +103,7 @@ export default function Page() {
                                     <Logo className="absolute inset-y-2.5 size-12 fill-black" />
                                     <div className=" my-8 flex w-full items-center justify-center">
                                        <h3 className="text-2xl font-bold uppercase">
-                                          Лицензийн тодорхойлолт
+                                          Лицензийн гэрчилгээ
                                        </h3>
                                     </div>
                                     <div className="mb-8 flex justify-end">

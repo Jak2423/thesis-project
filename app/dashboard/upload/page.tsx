@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Spinner from "@/components/ui/spinner";
-import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -240,7 +239,7 @@ export default function Page() {
                      </FormItem>
                   )}
                />
-               <FormField
+               {/* <FormField
                   control={form.control}
                   name="isPublic"
                   render={({ field }) => (
@@ -257,7 +256,7 @@ export default function Page() {
                         <FormMessage />
                      </FormItem>
                   )}
-               />
+               /> */}
                <Button type="submit" size={"lg"} disabled={isPending}>
                   Upload
                </Button>

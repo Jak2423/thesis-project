@@ -61,7 +61,7 @@ export default function SideNav() {
                      key={i}
                      href={l.href}
                      className={cn(
-                        "flex w-full items-center gap-x-2 rounded-md px-4  py-3 text-sm  outline-1 hover:bg-gray-950 hover:outline hover:outline-gray-800",
+                        "flex w-full items-center gap-x-2 rounded-md px-4 py-3 outline-1 hover:bg-gray-950 hover:outline hover:outline-gray-800",
                         {
                            "bg-gray-950 outline outline-gray-800":
                               pathname === l.href,
