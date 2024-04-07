@@ -4,13 +4,6 @@ import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/L
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
-   Dialog,
-   DialogContent,
-   DialogDescription,
-   DialogHeader,
-   DialogTitle,
-} from "@/components/ui/dialog";
-import {
    Form,
    FormControl,
    FormField,
@@ -24,7 +17,7 @@ import { useToast } from "@/components/ui/use-toast";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
    useAccount,
@@ -47,19 +40,13 @@ const formSchema = z.object({
 });
 
 export default function Page() {
-   const [hasError, setHasError] = useState(false);
    const [file, setFile] = useState<File | null>(null);
    const { connect } = useConnect();
    const { toast } = useToast();
    const fileInputRef = useRef<HTMLInputElement>(null);
 
-   const {
-      writeContract,
-      isPending,
-      error,
-      data: hash,
-      isError: issueError,
-   } = useWriteContract();
+   const { writeContract, isPending, data: hash } = useWriteContract();
+
    const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
       hash,
    });
@@ -143,10 +130,6 @@ export default function Page() {
       }
    }
 
-   useEffect(() => {
-      setHasError(true);
-   }, [error]);
-
    return (
       <main className="mx-auto flex w-full flex-col items-start px-8 lg:max-w-screen-lg lg:px-0">
          {isLoading && (
@@ -175,16 +158,6 @@ export default function Page() {
                   Файл байршуулахад алдаа гарлаа.
                </AlertDescription>
             </Alert>
-         )}
-         {error && (
-            <Dialog open={hasError} onOpenChange={setHasError}>
-               <DialogContent className="dark:text-gray-200">
-                  <DialogHeader className=" overflow-auto text-ellipsis text-wrap">
-                     <DialogTitle>{error?.name}</DialogTitle>
-                     <DialogDescription>{error?.message}</DialogDescription>
-                  </DialogHeader>
-               </DialogContent>
-            </Dialog>
          )}
          <Form {...form}>
             <form

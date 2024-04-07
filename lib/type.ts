@@ -1,7 +1,7 @@
 export type License = {
    licenseNumber: number,
    fileId: string,
-   owner: string,
+   fileOwner: string,
    fileName: string,
    description: string,
    category: string,
@@ -12,11 +12,19 @@ export type License = {
 
 export type UploadedFile = {
    id: number,
-   owner: string,
+   fileOwner: string,
    fileName: string,
    description: string,
    category: string,
    fileHash: string,
    isPublic: boolean,
    createdAt: number,
+}
+
+export type FileRequest = {
+   requestId: number,
+   fileId: number,
+   requester: string,
+   fileOwner: string,
+   isApproved: boolean,
 }

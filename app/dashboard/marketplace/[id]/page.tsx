@@ -15,20 +15,13 @@ import {
    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import {
-   Dialog,
-   DialogContent,
-   DialogDescription,
-   DialogHeader,
-   DialogTitle,
-} from "@/components/ui/dialog";
 import Spinner from "@/components/ui/spinner";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
 import { convertTimestampToDate, formatAddress } from "@/lib/utils";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
    useAccount,
    useReadContract,
@@ -37,56 +30,33 @@ import {
 } from "wagmi";
 
 export default function Page({ params }: { params: { id: string } }) {
-   const [hasError, setHasError] = useState(false);
    const [fileHash, setFileHash] = useState("");
-   const { isConnected } = useAccount();
+   const { isConnected, address } = useAccount();
 
-   const {
-      writeContract,
-      isPending,
-      error: writeError,
-      data: hash,
-      isError: issueError,
-   } = useWriteContract();
+   const { writeContract, isPending, data: hash } = useWriteContract();
 
    const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
       hash,
    });
 
-   const {
-      data: file,
-      isLoading: isReadLoading,
-      error,
-   } = useReadContract({
+   const { data: file } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
       functionName: "getPublicFileById",
       args: [Number(params.id)],
-   }) as { data: UploadedFile; isLoading: boolean; error: any };
+   }) as { data: UploadedFile };
 
-   function issueLicense(data: UploadedFile) {
+   function requestLicense(id: number, owner: string) {
       if (isConnected) {
          writeContract({
             abi: licenseValidationAbi.abi,
+            account: address,
             address: licenseValidationContract.contractAddress as `0x${string}`,
-            functionName: "issueLicense",
-            args: [
-               data.owner,
-               data.id,
-               data.fileName,
-               data.description,
-               data.category,
-               data.fileHash,
-               data.isPublic,
-            ],
+            functionName: "requestLicense",
+            args: [id, owner],
          });
       }
    }
-
-   useEffect(() => {
-      setHasError(true);
-   }, [writeError]);
-
    // useEffect(() => {
    //    isSuccess &&
    //       saveAs(
@@ -111,7 +81,7 @@ export default function Page({ params }: { params: { id: string } }) {
                   <div className="mb-8 space-y-4">
                      <p className="text-lg">
                         <span className="font-bold">Эзэмшигч: </span>
-                        {formatAddress(file.owner)}
+                        {formatAddress(file.fileOwner)}
                      </p>
                      <p className="text-lg">
                         <span className="font-bold">Төрөл: </span>
@@ -133,7 +103,7 @@ export default function Page({ params }: { params: { id: string } }) {
                            size="lg"
                            disabled={isPending}
                         >
-                           Авах
+                           Хүсэлт илгээх
                         </Button>
                      </AlertDialogTrigger>
                      <AlertDialogContent>
@@ -152,7 +122,9 @@ export default function Page({ params }: { params: { id: string } }) {
                               Cancel
                            </AlertDialogCancel>
                            <AlertDialogAction
-                              onClick={() => issueLicense(file)}
+                              onClick={() =>
+                                 requestLicense(file.id, file.fileOwner)
+                              }
                            >
                               Continue
                            </AlertDialogAction>
@@ -186,18 +158,6 @@ export default function Page({ params }: { params: { id: string } }) {
                   Лиценз баталгаажуулахад алдаа гарлаа.
                </AlertDescription>
             </Alert>
-         )}
-         {writeError && (
-            <Dialog open={hasError} onOpenChange={setHasError}>
-               <DialogContent className="dark:text-gray-200">
-                  <DialogHeader className=" overflow-auto text-ellipsis text-wrap">
-                     <DialogTitle>{writeError?.name}</DialogTitle>
-                     <DialogDescription>
-                        {writeError?.message}
-                     </DialogDescription>
-                  </DialogHeader>
-               </DialogContent>
-            </Dialog>
          )}
       </main>
    );

@@ -26,25 +26,18 @@ import { format } from "date-fns";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import Link from "next/link";
-import { useState } from "react";
 import { TbFileCertificate } from "react-icons/tb";
 
 import { useAccount, useReadContract } from "wagmi";
 
 export default function Page() {
-   const [showPfd, setShowPdf] = useState(false);
-
    const { address } = useAccount();
-   const {
-      data: userLicenses,
-      isLoading,
-      error,
-   } = useReadContract({
+   const { data: userLicenses } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
       functionName: "getAllUserLicenses",
       account: address,
-   }) as { data: License[]; isLoading: boolean; error: any };
+   }) as { data: License[] };
 
    function generatePDF(id: string) {
       const content = document.getElementById(id) as HTMLElement;
@@ -118,7 +111,7 @@ export default function Page() {
                                                 Эзэмшигч:
                                              </span>
                                              <span className="font-semibold">
-                                                {l.owner}
+                                                {l.fileOwner}
                                              </span>
                                           </p>
                                           <p className="flex gap-x-4">

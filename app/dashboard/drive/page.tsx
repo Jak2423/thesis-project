@@ -19,11 +19,7 @@ import { useAccount, useReadContract } from "wagmi";
 
 export default function Page() {
    const { address } = useAccount();
-   const {
-      data: userFiles,
-      isLoading,
-      error,
-   } = useReadContract({
+   const { data: userFiles, error } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
       functionName: "getAllUserFiles",

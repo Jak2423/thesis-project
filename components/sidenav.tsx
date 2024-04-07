@@ -3,7 +3,8 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiGlobe, FiHardDrive, FiShoppingCart, FiUpload } from "react-icons/fi";
+import { FiHardDrive, FiShoppingCart, FiUpload } from "react-icons/fi";
+import { IoTimeOutline } from "react-icons/io5";
 import { PiCertificate } from "react-icons/pi";
 import { Logo } from "./ui/logo";
 
@@ -14,14 +15,14 @@ const links = [
       icon: FiHardDrive,
    },
    {
+      name: "Requests",
+      href: "/dashboard/requests",
+      icon: IoTimeOutline,
+   },
+   {
       name: "Marketplace",
       href: "/dashboard/marketplace",
       icon: FiShoppingCart,
-   },
-   {
-      name: "Recent files",
-      href: "/dashboard/files",
-      icon: FiGlobe,
    },
    {
       name: "Licenses",
