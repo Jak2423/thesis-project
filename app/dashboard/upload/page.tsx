@@ -16,6 +16,7 @@ import Spinner from "@/components/ui/spinner";
 import { useToast } from "@/components/ui/use-toast";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { ChangeEvent, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -40,6 +41,7 @@ const formSchema = z.object({
 });
 
 export default function Page() {
+   const [uploading, setUploading] = useState(false);
    const [file, setFile] = useState<File | null>(null);
    const { connect } = useConnect();
    const { toast } = useToast();
@@ -70,7 +72,7 @@ export default function Page() {
 
    async function pinFileToIPFS(file: File): Promise<any> {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", file, file.name);
 
       const res = await fetch(
          "https://api.pinata.cloud/pinning/pinFileToIPFS",
@@ -95,7 +97,46 @@ export default function Page() {
          if (!file) {
             return;
          }
-         const res = await pinFileToIPFS(file);
+         setUploading(true);
+         const litNodeClient = new LitJsSdk.LitNodeClient({
+            litNetwork: "cayenne",
+         });
+
+         await litNodeClient.connect();
+         const authSig = await LitJsSdk.checkAndSignAuthMessage({
+            chain: "ethereum",
+            nonce: litNodeClient.getLatestBlockhash() as string,
+         });
+
+         const accs = [
+            {
+               contractAddress: "",
+               standardContractType: "",
+               chain: "ethereum",
+               method: "eth_getBalance",
+               parameters: [":userAddress", "latest"],
+               returnValueTest: {
+                  comparator: ">=",
+                  value: "0",
+               },
+            },
+         ];
+
+         const encryptedZip = await LitJsSdk.encryptFileAndZipWithMetadata({
+            accessControlConditions: accs,
+            authSig,
+            chain: "ethereum",
+            file: file,
+            litNodeClient: litNodeClient,
+            readme: "Use IPFS CID of this file to decrypt it",
+         });
+
+         const encryptedBlob = new Blob([encryptedZip], {
+            type: "text/plain",
+         });
+         const encryptedFile = new File([encryptedBlob], file.name);
+
+         const res = await pinFileToIPFS(encryptedFile);
 
          if (!res.isDuplicate) {
             writeContract({
@@ -125,10 +166,48 @@ export default function Page() {
                description: "This file has already been uploaded.",
             });
          }
+
+         setUploading(false);
       } catch (error) {
          console.error(error);
       }
    }
+
+   const decryptFile = async (fileToDecrypt) => {
+      try {
+         const fileRes = await fetch(
+            `${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/${fileToDecrypt}`,
+         );
+         const file = await fileRes.blob();
+
+         const litNodeClient = new LitJsSdk.LitNodeClient({
+            litNetwork: "cayenne",
+         });
+         await litNodeClient.connect();
+         const authSig = await LitJsSdk.checkAndSignAuthMessage({
+            chain: "ethereum",
+            nonce: litNodeClient.getLatestBlockhash() as string,
+         });
+
+         const { decryptedFile, metadata } =
+            await LitJsSdk.decryptZipFileWithMetadata({
+               file: file,
+               litNodeClient: litNodeClient,
+               authSig: authSig,
+            });
+         const blob = new Blob([decryptedFile], {
+            type: "application/octet-stream",
+         });
+
+         const downloadLink = document.createElement("a");
+         downloadLink.href = URL.createObjectURL(blob);
+         downloadLink.download = metadata.name;
+         downloadLink.click();
+      } catch (error) {
+         alert("Trouble decrypting file");
+         console.log(error);
+      }
+   };
 
    return (
       <main className="mx-auto flex w-full flex-col items-start px-8 lg:max-w-screen-lg lg:px-0">
@@ -230,8 +309,8 @@ export default function Page() {
                      </FormItem>
                   )}
                /> */}
-               <Button type="submit" size={"lg"} disabled={isPending}>
-                  Upload
+               <Button type="submit" size={"lg"} disabled={uploading}>
+                  {uploading ? "Uploading..." : "Upload"}
                </Button>
             </form>
          </Form>

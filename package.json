@@ -13,6 +13,7 @@
    },
    "dependencies": {
       "@hookform/resolvers": "^3.3.4",
+      "@lit-protocol/lit-node-client": "^3.0.32",
       "@nomicfoundation/hardhat-ethers": "^3.0.0",
       "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
       "@nomicfoundation/hardhat-verify": "^2.0.4",
@@ -37,7 +38,6 @@
       "date-fns": "^3.3.1",
       "dotenv": "^16.4.5",
       "ethers": "^6.11.1",
-      "file-saver": "^2.0.5",
       "hardhat-gas-reporter": "^1.0.8",
       "html2canvas": "^1.4.1",
       "jspdf": "^2.5.1",
@@ -62,7 +62,6 @@
       "@nomicfoundation/hardhat-chai-matchers": "^2.0.6",
       "@nomicfoundation/hardhat-toolbox": "^4.0.0",
       "@openzeppelin/hardhat-upgrades": "^3.0.5",
-      "@types/file-saver": "^2.0.7",
       "@types/node": "^20",
       "@types/react": "^18",
       "@types/react-dom": "^18",
