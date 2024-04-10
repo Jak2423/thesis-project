@@ -1,5 +1,4 @@
 import { Providers } from "@/app/provider";
-import GridPattern from "@/components/ui/grid-patter";
 import { Toaster } from "@/components/ui/toaster";
 import "@rainbow-me/rainbowkit/styles.css";
 import type { Metadata } from "next";
@@ -7,7 +6,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
    title: "License Validation",
-   description: "License validation with blockchain",
+   description: "License validation with Blockchain",
 };
 
 export default function RootLayout({
@@ -16,11 +15,10 @@ export default function RootLayout({
    children: React.ReactNode;
 }>) {
    return (
-      <html lang="en" className="dark" suppressHydrationWarning>
-         <body className="bg-gray-950 tracking-tight antialiased">
+      <html lang="en" suppressHydrationWarning>
+         <body className="bg-gray-100 tracking-tight text-gray-950 antialiased dark:bg-gray-900 dark:text-white">
             <Providers>
-               <div className="relative flex h-full min-h-screen w-full flex-col items-center leading-6 text-white">
-                  <GridPattern />
+               <div className="relative flex h-full min-h-screen w-full flex-col items-center leading-6">
                   <Toaster />
                   {children}
                </div>

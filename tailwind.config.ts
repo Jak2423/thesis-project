@@ -24,7 +24,7 @@ const config = {
          colors: {
             gray: {
                0: '#ffffff',
-               50: '#ffffff',
+               50: '#fcfcfc',
                100: '#fafafa',
                200: '#eaeaea',
                300: '#999999',

@@ -26,9 +26,9 @@ export default function PdfViewer({ url }: { url: string }) {
    };
 
    return (
-      <div className="relative text-gray-900">
+      <div className="relative text-gray-900 shadow-lg">
          <Document
-            file={{ url: url }}
+            file={url}
             onContextMenu={(e) => e.preventDefault()}
             onLoadSuccess={onDocumentLoadSuccess}
          >

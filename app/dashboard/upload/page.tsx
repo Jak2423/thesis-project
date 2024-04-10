@@ -3,6 +3,7 @@
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Card, CardFooter } from "@/components/ui/card";
 import {
    Form,
    FormControl,
@@ -12,7 +13,15 @@ import {
    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue,
+} from "@/components/ui/select";
 import Spinner from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,11 +40,17 @@ import { z } from "zod";
 
 const formSchema = z.object({
    fileName: z.string().min(1, {
-      message: "Файлийн нэрийг оруулна уу.",
+      message: "Файлын нэрийг оруулна уу.",
    }),
-   description: z.string().min(2, {
-      message: "Файлийн дэлгэрэнгүй тайлбар оруулна уу.",
-   }),
+   description: z
+      .string()
+      .min(1, {
+         message: "Файлын дэлгэрэнгүй тайлбар оруулна уу.",
+      })
+      .max(160, {
+         message: "Файлын дэлгэрэнгүй тайлбар оруулна уу.",
+      }),
+   category: z.string({ required_error: "Файлын төрлийг сонгоно уу." }),
    uploadedFile: z.any(),
    isPublic: z.boolean(),
 });
@@ -45,14 +60,39 @@ export default function Page() {
    const [file, setFile] = useState<File | null>(null);
    const { connect } = useConnect();
    const { toast } = useToast();
+   const [acceptedFileType, setAcceptedFileType] = useState<string>("");
    const fileInputRef = useRef<HTMLInputElement>(null);
+
+   function handleCategoryChange(selectedCategory: string) {
+      switch (selectedCategory) {
+         case "PDF":
+            setAcceptedFileType("application/pdf");
+            break;
+         case "Image":
+            setAcceptedFileType("image/*");
+            break;
+         case "Video":
+            setAcceptedFileType("video/*");
+            break;
+         case "Audio":
+            setAcceptedFileType("audio/*");
+            break;
+         default:
+            setAcceptedFileType("");
+            break;
+      }
+
+      if (fileInputRef.current) {
+         fileInputRef.current.value = "";
+      }
+   }
 
    const { writeContract, isPending, data: hash } = useWriteContract();
 
    const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
       hash,
    });
-   const { isConnected } = useAccount();
+   const { isConnected, address } = useAccount();
 
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
@@ -147,7 +187,7 @@ export default function Page() {
                args: [
                   data.fileName,
                   data.description,
-                  "PDF",
+                  data.category,
                   res.IpfsHash,
                   data.isPublic,
                ],
@@ -172,42 +212,6 @@ export default function Page() {
          console.error(error);
       }
    }
-
-   const decryptFile = async (fileToDecrypt) => {
-      try {
-         const fileRes = await fetch(
-            `${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/${fileToDecrypt}`,
-         );
-         const file = await fileRes.blob();
-
-         const litNodeClient = new LitJsSdk.LitNodeClient({
-            litNetwork: "cayenne",
-         });
-         await litNodeClient.connect();
-         const authSig = await LitJsSdk.checkAndSignAuthMessage({
-            chain: "ethereum",
-            nonce: litNodeClient.getLatestBlockhash() as string,
-         });
-
-         const { decryptedFile, metadata } =
-            await LitJsSdk.decryptZipFileWithMetadata({
-               file: file,
-               litNodeClient: litNodeClient,
-               authSig: authSig,
-            });
-         const blob = new Blob([decryptedFile], {
-            type: "application/octet-stream",
-         });
-
-         const downloadLink = document.createElement("a");
-         downloadLink.href = URL.createObjectURL(blob);
-         downloadLink.download = metadata.name;
-         downloadLink.click();
-      } catch (error) {
-         alert("Trouble decrypting file");
-         console.log(error);
-      }
-   };
 
    return (
       <main className="mx-auto flex w-full flex-col items-start px-8 lg:max-w-screen-lg lg:px-0">
@@ -243,55 +247,93 @@ export default function Page() {
                encType="multipart/form-data"
                method="POST"
                onSubmit={form.handleSubmit(onSubmit)}
-               className="w-full space-y-8 md:w-2/3"
+               className="mb-8 w-full md:w-3/4"
             >
-               <FormField
-                  control={form.control}
-                  name="fileName"
-                  render={({ field }) => (
-                     <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                           <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                     </FormItem>
-                  )}
-               />
-               <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                     <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                           <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                     </FormItem>
-                  )}
-               />
-               <FormField
-                  control={form.control}
-                  name="uploadedFile"
-                  render={({ field: { value, onChange, ...field } }) => (
-                     <FormItem>
-                        <FormLabel>Upload file</FormLabel>
-                        <FormControl>
-                           <Input
-                              {...field}
-                              type="file"
-                              ref={fileInputRef}
-                              accept="application/pdf"
-                              onChange={handleUploadFile}
-                              className="file:text-gray-200"
-                           />
-                        </FormControl>
-                        <FormMessage />
-                     </FormItem>
-                  )}
-               />
-               {/* <FormField
+               <Card className="w-full space-y-8 px-8 py-8">
+                  <FormItem>
+                     <FormLabel>Your address</FormLabel>
+                     <FormControl>
+                        <Input defaultValue={address} disabled />
+                     </FormControl>
+                     <FormMessage />
+                  </FormItem>
+                  <FormField
+                     control={form.control}
+                     name="fileName"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>Title</FormLabel>
+                           <FormControl>
+                              <Input {...field} />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+                  <FormField
+                     control={form.control}
+                     name="description"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>Description</FormLabel>
+                           <FormControl>
+                              <Textarea className="resize-none" {...field} />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+                  <FormField
+                     control={form.control}
+                     name="category"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>Category</FormLabel>
+                           <Select
+                              defaultValue={field.value}
+                              onValueChange={(value) => {
+                                 form.setValue("category", value);
+                                 handleCategoryChange(value);
+                              }}
+                           >
+                              <FormControl>
+                                 <SelectTrigger>
+                                    <SelectValue placeholder="Select" />
+                                 </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                 <SelectItem value="PDF">PDF</SelectItem>
+                                 <SelectItem value="Image">Image</SelectItem>
+                                 <SelectItem value="Video">Video</SelectItem>
+                                 <SelectItem value="Audio">Audio</SelectItem>
+                              </SelectContent>
+                           </Select>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+                  <FormField
+                     control={form.control}
+                     name="uploadedFile"
+                     render={({ field: { value, onChange, ...field } }) => (
+                        <FormItem>
+                           <FormLabel>Upload file</FormLabel>
+                           <FormControl>
+                              <Input
+                                 {...field}
+                                 type="file"
+                                 ref={fileInputRef}
+                                 accept={acceptedFileType}
+                                 onChange={handleUploadFile}
+                                 className="file:text-gray-900 file:dark:text-gray-200"
+                                 disabled={!acceptedFileType}
+                              />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+                  {/* <FormField
                   control={form.control}
                   name="isPublic"
                   render={({ field }) => (
@@ -309,9 +351,17 @@ export default function Page() {
                      </FormItem>
                   )}
                /> */}
-               <Button type="submit" size={"lg"} disabled={uploading}>
-                  {uploading ? "Uploading..." : "Upload"}
-               </Button>
+
+                  <CardFooter className="border-t px-0 pb-0 pt-8 dark:border-gray-800">
+                     <Button
+                        type="submit"
+                        size={"lg"}
+                        disabled={isPending || uploading}
+                     >
+                        {isPending || uploading ? "Uploading..." : "Upload"}
+                     </Button>
+                  </CardFooter>
+               </Card>
             </form>
          </Form>
       </main>

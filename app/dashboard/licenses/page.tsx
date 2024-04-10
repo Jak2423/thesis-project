@@ -63,7 +63,7 @@ export default function Page() {
    return (
       <main className="flex w-full flex-col items-start px-8  ">
          <ScreenHeader title="My Licenses" />
-         <div className="grid w-full grid-cols-2 gap-x-4 gap-y-2 md:grid-cols-4  lg:grid-cols-5">
+         <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4  lg:grid-cols-5">
             {userLicenses &&
                userLicenses.map((l, i) => (
                   <Card className="w-full" key={i}>

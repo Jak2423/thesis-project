@@ -1,7 +1,7 @@
 export default function GridPattern() {
    return (
       <svg
-         className="absolute inset-0 -z-20 h-full w-full stroke-white/5 [mask-image:radial-gradient(75%_60%_at_top_center,white,transparent)]"
+         className="absolute inset-0 -z-20 h-full w-full stroke-black/5 [mask-image:radial-gradient(75%_60%_at_top_center,white,transparent)] dark:stroke-white/5"
          aria-hidden="true"
       >
          <defs>

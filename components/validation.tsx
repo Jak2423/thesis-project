@@ -34,17 +34,17 @@ export default function Validation() {
       <form className="relative w-full lg:w-2/3" onSubmit={handleRevokeLicense}>
          <input
             type="text"
-            className="block w-full rounded-lg border border-gray-800  bg-transparent p-4 text-lg font-medium  text-white placeholder-gray-400 outline-none transition-all duration-100 ease-in focus-visible:ring-1 focus-visible:ring-gray-300"
+            className="block w-full rounded-lg border border-gray-200 bg-transparent p-4  text-lg font-medium text-gray-950 placeholder-gray-400  outline-none transition-all duration-100 ease-in focus-visible:ring-1 focus-visible:ring-gray-300 dark:border-gray-800 dark:text-gray-50"
             placeholder="Лицензийн Дугаар"
             value={licenseNum}
             onChange={(e) => setLicenseNum(e.target.value)}
             required
          />
-         <button className="absolute bottom-2.5 end-2.5 top-2.5 rounded-lg bg-gray-50 px-4 py-2 text-gray-900 hover:bg-gray-50/90 hover:opacity-80">
+         <button className="absolute bottom-2.5 end-2.5 top-2.5 rounded-lg bg-gray-950 px-4 py-2 text-gray-100 hover:opacity-80  dark:bg-gray-50 dark:text-gray-900">
             Шалгах
          </button>
          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent className="text-gray-200">
+            <DialogContent className="text-gray-800 dark:text-gray-200">
                <DialogHeader>
                   <DialogTitle>
                      {isValid

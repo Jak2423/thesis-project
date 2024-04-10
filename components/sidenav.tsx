@@ -35,13 +35,13 @@ export default function SideNav() {
    const pathname = usePathname();
 
    return (
-      <div className="hidden h-screen flex-col gap-y-4 border-r border-gray-800 bg-gray-950 py-4 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72">
-         <div className="mb-4 gap-x-2 border-gray-800 px-6">
+      <div className="hidden h-screen flex-col gap-y-4 border-r border-gray-200 bg-gray-50 py-4 dark:border-gray-800 dark:bg-gray-950 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72">
+         <div className="mb-4 px-6">
             <Link
                href={"/dashboard"}
-               className="flex h-16 items-center justify-start"
+               className="flex h-16 items-center justify-start gap-x-2"
             >
-               <Logo className="size-10 fill-gray-50" />
+               <Logo className="size-10 fill-gray-950 dark:fill-gray-100" />
                <span className="text-2xl font-semibold tracking-tighter">
                   Licens
                </span>
@@ -50,7 +50,7 @@ export default function SideNav() {
          <div className="flex flex-col items-start gap-y-4 px-6">
             <Link
                href="/dashboard/upload"
-               className="flex w-full items-center justify-center gap-x-2 rounded-md bg-gray-100 px-4 py-3 text-gray-950 hover:opacity-80"
+               className="flex w-full items-center justify-center gap-x-2 rounded-md bg-gray-800 px-4 py-3 text-gray-100 hover:opacity-80 dark:bg-gray-100 dark:text-gray-950"
             >
                <FiUpload className="h-5 w-5" />
                <span className="">Upload file</span>
@@ -62,15 +62,17 @@ export default function SideNav() {
                      key={i}
                      href={l.href}
                      className={cn(
-                        "flex w-full items-center gap-x-2 rounded-md px-4 py-3 outline-1 hover:bg-gray-950 hover:outline hover:outline-gray-800",
+                        "flex w-full items-center gap-x-2 rounded-md px-4 py-3 outline-1 outline-gray-200  hover:outline   dark:hover:outline-gray-800",
                         {
-                           "bg-gray-950 outline outline-gray-800":
+                           "bg-gray-100 outline outline-gray-200 dark:bg-gray-950 dark:outline-gray-800":
                               pathname === l.href,
                         },
                      )}
                   >
                      <LinkIcon className="h-5 w-5" />
-                     <span className="text-gray-200">{l.name}</span>
+                     <span className="text-gray-800 dark:text-gray-200">
+                        {l.name}
+                     </span>
                   </Link>
                );
             })}

@@ -76,24 +76,28 @@ export default function Page() {
                            access for File id: {Number(r.fileId)} file.
                         </h4>
                      </div>
-                     <div className="flex items-center gap-x-4">
-                        <Button
-                           size="icon"
-                           variant="outline"
-                           disabled={isPending || r.isApproved === true}
-                           onClick={() => approveRequest(r.requestId)}
-                        >
-                           <CheckIcon className="size-5 text-green-400" />
-                        </Button>
-                        <Button
-                           size="icon"
-                           variant="outline"
-                           disabled={isPending || r.isApproved === true}
-                           onClick={() => rejectRequest(r.requestId)}
-                        >
-                           <Cross2Icon className="size-5 text-red-400" />
-                        </Button>
-                     </div>
+                     {r.isApproved ? (
+                        <p className="font-bold">Approved</p>
+                     ) : (
+                        <div className="flex items-center gap-x-4">
+                           <Button
+                              size="icon"
+                              variant="outline"
+                              disabled={isPending || r.isApproved}
+                              onClick={() => approveRequest(r.requestId)}
+                           >
+                              <CheckIcon className="size-5 text-green-400" />
+                           </Button>
+                           <Button
+                              size="icon"
+                              variant="outline"
+                              disabled={isPending || r.isApproved}
+                              onClick={() => rejectRequest(r.requestId)}
+                           >
+                              <Cross2Icon className="size-5 text-red-400" />
+                           </Button>
+                        </div>
+                     )}
                   </div>
                ))}
          </div>

@@ -3,6 +3,7 @@
 import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
@@ -24,18 +25,25 @@ export function Providers({
    children: React.ReactNode;
 }>) {
    return (
-      <WagmiProvider config={config}>
-         <QueryClientProvider client={queryClient}>
-            <RainbowKitProvider
-               modalSize="compact"
-               theme={darkTheme({
-                  accentColor: "hsla(0,0%,40%,.15)",
-                  borderRadius: "medium",
-               })}
-            >
-               {children}
-            </RainbowKitProvider>
-         </QueryClientProvider>
-      </WagmiProvider>
+      <NextThemesProvider
+         attribute="class"
+         defaultTheme="system"
+         enableSystem
+         disableTransitionOnChange
+      >
+         <WagmiProvider config={config}>
+            <QueryClientProvider client={queryClient}>
+               <RainbowKitProvider
+                  modalSize="compact"
+                  theme={darkTheme({
+                     accentColor: "hsla(0,0%,40%,.15)",
+                     borderRadius: "medium",
+                  })}
+               >
+                  {children}
+               </RainbowKitProvider>
+            </QueryClientProvider>
+         </WagmiProvider>
+      </NextThemesProvider>
    );
 }

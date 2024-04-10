@@ -22,7 +22,7 @@ export default function LicensePdf({ license }: { license: License }) {
                <div className="space-y-2">
                   <p className="flex gap-x-4">
                      <span className="w-32">Эзэмшигч:</span>
-                     <span className="font-semibold">{license.owner}</span>
+                     <span className="font-semibold">{license.fileOwner}</span>
                   </p>
                   <p className="flex gap-x-4">
                      <span className="w-32">Файлын дугаар:</span>
