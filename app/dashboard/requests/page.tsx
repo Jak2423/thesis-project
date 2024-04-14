@@ -58,7 +58,7 @@ export default function Page() {
 
    useEffect(() => {
       isSuccess && refetch();
-   }, [isSuccess]);
+   }, [isSuccess, refetch]);
 
    return (
       <main className="flex w-full flex-col items-start px-8">

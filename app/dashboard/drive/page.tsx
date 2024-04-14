@@ -37,12 +37,9 @@ export default function Page() {
          <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
             {userFiles &&
                userFiles.map((f, i) => (
-                  <Dialog>
+                  <Dialog key={i}>
                      <DialogTrigger asChild>
-                        <Card
-                           className="w-full transition-all duration-150 ease-in-out hover:opacity-70"
-                           key={i}
-                        >
+                        <Card className="w-full transition-all duration-150 ease-in-out hover:opacity-70">
                            <CardHeader>
                               <CardTitle className="truncate">
                                  {f.fileName}

@@ -54,7 +54,7 @@ export default function PreviewFile({
          }
       };
       decryptFile(cid);
-   }, []);
+   }, [cid]);
 
    return (
       <div className="flex items-center justify-center overflow-auto ">
