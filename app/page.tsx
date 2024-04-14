@@ -23,7 +23,7 @@ export default function Page() {
       if (isConnected) {
          router.push("/dashboard");
       }
-   }, [isConnected]);
+   }, [isConnected, router]);
 
    return (
       <main className="">
