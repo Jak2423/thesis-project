@@ -13,7 +13,7 @@ export default function Page() {
       if (isConnected) {
          router.push("/dashboard");
       }
-   }, [isConnected]);
+   }, [isConnected, router]);
 
    return (
       <main className="flex h-screen w-full  items-center justify-center bg-gray-950">
