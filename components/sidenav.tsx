@@ -39,7 +39,7 @@ export default function SideNav() {
          <div className="mb-4 px-6">
             <Link
                href={"/dashboard"}
-               className="flex h-16 items-center justify-start gap-x-2"
+               className="flex h-16 items-center justify-start gap-x-1"
             >
                <Logo className="size-10 fill-gray-950 dark:fill-gray-100" />
                <span className="text-2xl font-semibold tracking-tighter">

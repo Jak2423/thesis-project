@@ -36,7 +36,7 @@ export function Providers({
                <RainbowKitProvider
                   modalSize="compact"
                   theme={darkTheme({
-                     accentColor: "hsla(0,0%,40%,.15)",
+                     accentColor: "#222",
                      borderRadius: "medium",
                   })}
                >

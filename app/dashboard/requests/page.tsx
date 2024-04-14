@@ -65,7 +65,7 @@ export default function Page() {
          <ScreenHeader title="Pending Requests" />
          <div className="flex w-full flex-col gap-y-4">
             {requests &&
-               requests.map((r, i) => (
+               requests.toReversed().map((r, i) => (
                   <div
                      className="flex w-full items-center gap-x-2 border-b border-gray-800 py-4"
                      key={i}
@@ -77,8 +77,13 @@ export default function Page() {
                         </h4>
                      </div>
                      {r.isApproved ? (
-                        <p className="font-bold">Approved</p>
+                        <p className="flex items-center  rounded-md border  px-2 py-1 ">
+                           <span className="text-sm font-semibold">
+                              Approved
+                           </span>
+                        </p>
                      ) : (
+                        // <p className="text-sm font-semibold">Approved</p>
                         <div className="flex items-center gap-x-4">
                            <Button
                               size="icon"

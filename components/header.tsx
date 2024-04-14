@@ -14,8 +14,8 @@ export default function Header() {
    };
 
    return (
-      <header className="sticky top-0 z-20 mb-8 flex w-full flex-col justify-center border-b border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-950">
-         <div className=" flex w-full items-center justify-between px-8 py-4 lg:justify-end">
+      <header className="sticky top-0 z-20 mb-8 flex w-full justify-center border-b border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-950">
+         <div className=" flex w-full items-center justify-between px-8 py-6 lg:justify-end">
             <MobileMenu />
             <div className="flex items-center gap-x-4">
                <Button variant="ghost" size="icon" onClick={handleTheme}>

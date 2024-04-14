@@ -1,6 +1,7 @@
 "use client";
 
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
+import PreviewFile from "@/components/preview-file";
 import { Button } from "@/components/ui/button";
 import {
    Card,
@@ -25,7 +26,6 @@ import { ArrowRightIcon, DownloadIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
-import Link from "next/link";
 import { TbFileCertificate } from "react-icons/tb";
 
 import { useAccount, useReadContract } from "wagmi";
@@ -68,18 +68,24 @@ export default function Page() {
                userLicenses.map((l, i) => (
                   <Card className="w-full" key={i}>
                      <CardHeader>
-                        <CardTitle className="truncate">
-                           <Link href={`/dashboard/preview/${l.fileHash}`}>
-                              {l.fileName}
-                           </Link>
-                        </CardTitle>
+                        <CardTitle className="truncate">{l.fileName}</CardTitle>
                         <CardDescription className="truncate">
                            {l.description}
                         </CardDescription>
                      </CardHeader>
-                     <CardContent className="flex w-full items-center justify-center">
-                        <TbFileCertificate className="size-20" />
-                     </CardContent>
+                     <Dialog>
+                        <DialogTrigger asChild>
+                           <CardContent className="flex w-full items-center justify-center">
+                              <TbFileCertificate className="size-20" />
+                           </CardContent>
+                        </DialogTrigger>
+                        <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-16 text-gray-100 backdrop-blur-sm dark:bg-transparent">
+                           {/* <DialogHeader>
+                              <DialogTitle>{l.fileName}</DialogTitle>
+                           </DialogHeader> */}
+                           <PreviewFile cid={l.fileHash} type={l.category} />
+                        </DialogContent>
+                     </Dialog>
                      <CardFooter className="flex justify-end">
                         <Dialog>
                            <DialogTrigger asChild>

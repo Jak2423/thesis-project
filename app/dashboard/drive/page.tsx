@@ -1,25 +1,30 @@
 "use client";
 
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
+import PreviewFile from "@/components/preview-file";
 import {
    Card,
    CardContent,
    CardDescription,
-   CardFooter,
    CardHeader,
    CardTitle,
 } from "@/components/ui/card";
-import PdfIcon from "@/components/ui/pdf-icon";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ScreenHeader from "@/components/ui/screen-header";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
-import { ExternalLinkIcon } from "@radix-ui/react-icons";
+import {
+   FaFileAudio,
+   FaFileImage,
+   FaFilePdf,
+   FaFileVideo,
+} from "react-icons/fa6";
 
 import { useAccount, useReadContract } from "wagmi";
 
 export default function Page() {
    const { address } = useAccount();
-   const { data: userFiles, error } = useReadContract({
+   const { data: userFiles } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
       functionName: "getAllUserFiles",
@@ -32,30 +37,43 @@ export default function Page() {
          <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
             {userFiles &&
                userFiles.map((f, i) => (
-                  <Card
-                     className="w-full transition-all duration-150 ease-in-out hover:opacity-70"
-                     key={i}
-                  >
-                     <CardHeader>
-                        <CardTitle className="truncate">{f.fileName}</CardTitle>
-                        <CardDescription className="truncate">
-                           {f.description}
-                        </CardDescription>
-                     </CardHeader>
-                     <CardContent className="flex w-full items-center justify-center">
-                        <PdfIcon width="60" height="100%" />
-                     </CardContent>
-                     <CardFooter className="flex justify-end">
-                        <a
-                           href={`https://silver-patient-falcon-52.mypinata.cloud/ipfs/${f.fileHash}`}
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           className="hover:opacity-60"
+                  <Dialog>
+                     <DialogTrigger asChild>
+                        <Card
+                           className="w-full transition-all duration-150 ease-in-out hover:opacity-70"
+                           key={i}
                         >
-                           <ExternalLinkIcon className="h-4 w-4" />
-                        </a>
-                     </CardFooter>
-                  </Card>
+                           <CardHeader>
+                              <CardTitle className="truncate">
+                                 {f.fileName}
+                              </CardTitle>
+                              <CardDescription className="truncate">
+                                 {f.description}
+                              </CardDescription>
+                           </CardHeader>
+                           <CardContent className="flex w-full items-center justify-center pb-8">
+                              {(f.category === "PDF" && (
+                                 <FaFilePdf className="size-24" />
+                              )) ||
+                                 (f.category === "Image" && (
+                                    <FaFileImage className="size-24" />
+                                 )) ||
+                                 (f.category === "Video" && (
+                                    <FaFileVideo className="size-24" />
+                                 )) ||
+                                 (f.category === "Audio" && (
+                                    <FaFileAudio className="size-24" />
+                                 ))}
+                           </CardContent>
+                        </Card>
+                     </DialogTrigger>
+                     <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-16 text-gray-100 backdrop-blur-sm dark:bg-transparent">
+                        {/* <DialogHeader>
+                           <DialogTitle>{f.fileName}</DialogTitle>
+                        </DialogHeader> */}
+                        <PreviewFile cid={f.fileHash} type={f.category} />
+                     </DialogContent>
+                  </Dialog>
                ))}
          </div>
       </main>

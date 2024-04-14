@@ -1,6 +1,6 @@
 import Validation from "@/components/validation";
 
-export default function Home() {
+export default function Page() {
    return (
       <main className="mx-auto w-full lg:max-w-screen-lg">
          <div className="my-4 flex w-full flex-col items-center justify-center px-8 lg:px-0">

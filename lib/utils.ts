@@ -34,3 +34,4 @@ export function calculateFileHash(file: File): Promise<string> {
       reader.readAsArrayBuffer(file);
    });
 };
+

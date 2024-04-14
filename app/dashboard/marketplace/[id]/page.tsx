@@ -147,7 +147,7 @@ export default function Page({ params }: { params: { id: string } }) {
             <Alert className="fixed bottom-2.5 left-2.5 right-2.5 w-auto md:left-auto md:w-1/3">
                <CheckCircledIcon className="h-5 w-5" />
                <AlertTitle>Амжилттай</AlertTitle>
-               <AlertDescription>Лиценз амжилттай үүсгэгдлээ.</AlertDescription>
+               <AlertDescription>Хүсэлт амжилттай илгээгдлээ.</AlertDescription>
             </Alert>
          )}
          {isError && (
@@ -155,7 +155,7 @@ export default function Page({ params }: { params: { id: string } }) {
                <CheckCircledIcon className="h-5 w-5" />
                <AlertTitle>Алдаа</AlertTitle>
                <AlertDescription>
-                  Лиценз баталгаажуулахад алдаа гарлаа.
+                  Хүсэлт илгээхэд алдаа гарлаа.
                </AlertDescription>
             </Alert>
          )}
