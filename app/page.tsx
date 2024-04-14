@@ -7,7 +7,6 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useAccount } from "wagmi";
 
 export default function Page() {
@@ -19,11 +18,11 @@ export default function Page() {
       setTheme(theme === "dark" ? "light" : "dark");
    };
 
-   useEffect(() => {
-      if (isConnected) {
-         router.push("/dashboard");
-      }
-   }, [isConnected, router]);
+   // useEffect(() => {
+   //    if (isConnected) {
+   //       router.push("/dashboard");
+   //    }
+   // }, [isConnected, router]);
 
    return (
       <main className="">
