@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useAccount } from "wagmi";
 
 export default function Page() {
@@ -18,11 +18,11 @@ export default function Page() {
       setTheme(theme === "dark" ? "light" : "dark");
    };
 
-   useEffect(() => {
-      if (isConnected) {
-         router.push("/dashboard");
-      }
-   }, [isConnected]);
+   // useEffect(() => {
+   //    if (isConnected) {
+   //       router.push("/dashboard");
+   //    }
+   // }, [isConnected]);
 
    return (
       <main className="">
@@ -63,7 +63,14 @@ export default function Page() {
                   </p>
                </div>
                <div>
-                  <img src="/images/flower.png" className="w-full" />
+                  <Image
+                     src="/images/flower.png"
+                     alt="flower"
+                     width={0}
+                     height={0}
+                     sizes="100vw"
+                     className="h-auto w-full"
+                  />
                </div>
             </div>
          </section>

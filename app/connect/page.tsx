@@ -6,10 +6,10 @@ import { useEffect } from "react";
 import { useAccount } from "wagmi";
 
 export default function Page() {
+   const router = useRouter();
    const { isConnected } = useAccount();
 
    useEffect(() => {
-      const router = useRouter();
       if (isConnected) {
          router.push("/dashboard");
       }
