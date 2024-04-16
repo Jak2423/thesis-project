@@ -10,7 +10,10 @@ import { injected } from "wagmi/connectors";
 
 const config = createConfig({
    chains: [sepolia],
-   connectors: [injected({ target: "metaMask" })],
+   connectors: [
+      injected({ target: "metaMask" }),
+      // walletConnect({ projectId: "095f374bd378a0011202d8c1e82b92d1" }),
+   ],
    transports: {
       [sepolia.id]: http(),
    },

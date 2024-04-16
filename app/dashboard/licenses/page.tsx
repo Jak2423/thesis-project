@@ -26,12 +26,14 @@ import { ArrowRightIcon, DownloadIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { useState } from "react";
 import { TbFileCertificate } from "react-icons/tb";
 
 import { useAccount, useReadContract } from "wagmi";
 
 export default function Page() {
    const { address } = useAccount();
+   const [openModal, setOpenModal] = useState(false);
    const { data: userLicenses } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
@@ -73,9 +75,9 @@ export default function Page() {
                            {l.description}
                         </CardDescription>
                      </CardHeader>
-                     <Dialog>
+                     <Dialog open={openModal} onOpenChange={setOpenModal}>
                         <DialogTrigger asChild>
-                           <CardContent className="flex w-full items-center justify-center">
+                           <CardContent className="flex w-full items-center justify-center hover:cursor-pointer">
                               <TbFileCertificate className="size-20" />
                            </CardContent>
                         </DialogTrigger>
@@ -83,7 +85,11 @@ export default function Page() {
                            {/* <DialogHeader>
                               <DialogTitle>{l.fileName}</DialogTitle>
                            </DialogHeader> */}
-                           <PreviewFile cid={l.fileHash} type={l.category} />
+                           <PreviewFile
+                              cid={l.fileCid}
+                              type={l.category}
+                              setOpenModal={setOpenModal}
+                           />
                         </DialogContent>
                      </Dialog>
                      <CardFooter className="flex justify-end">
@@ -133,7 +139,7 @@ export default function Page() {
                                                 Файлын хэш:
                                              </span>
                                              <span className="font-semibold">
-                                                {l.fileHash}
+                                                {l.fileCid}
                                              </span>
                                           </p>
                                           <p className="flex gap-x-4">

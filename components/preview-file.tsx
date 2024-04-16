@@ -3,16 +3,20 @@ import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { useEffect, useState } from "react";
 import PdfViewer from "./pdf-viewer";
 import Spinner from "./ui/spinner";
+import { useToast } from "./ui/use-toast";
 
 export default function PreviewFile({
    cid,
    type,
+   setOpenModal,
 }: {
    cid: string;
    type: string;
+   setOpenModal: any;
 }) {
    const [fileURl, setFileUrl] = useState<string | null>(null);
    const [isLoading, setIsLoading] = useState<boolean>(false);
+   const { toast } = useToast();
 
    useEffect(() => {
       const decryptFile = async (fileToDecrypt: string) => {
@@ -49,7 +53,11 @@ export default function PreviewFile({
             // downloadLink.download = metadata.name;
             // downloadLink.click();
          } catch (error) {
-            alert("Trouble decrypting file");
+            setOpenModal(false);
+            toast({
+               variant: "destructive",
+               description: "Trouble decrypting file",
+            });
             console.log(error);
          }
       };

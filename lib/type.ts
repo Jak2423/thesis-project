@@ -5,7 +5,7 @@ export type License = {
    fileName: string,
    description: string,
    category: string,
-   fileHash: string,
+   fileCid: string,
    isPublic: boolean,
    createdAt: number,
 }
@@ -16,7 +16,7 @@ export type UploadedFile = {
    fileName: string,
    description: string,
    category: string,
-   fileHash: string,
+   fileCid: string,
    isPublic: boolean,
    createdAt: number,
 }

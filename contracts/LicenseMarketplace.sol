@@ -4,13 +4,13 @@ pragma solidity ^0.8.0;
 contract LicenseMarketplace {
     address public owner;
 
-    struct File {
+   struct File {
         uint256 id;
         address fileOwner;
         string fileName;
         string description;
         string category;
-        string fileHash;
+        string fileCid;
         bool isPublic;
         uint256 createdAt;
     }
@@ -23,7 +23,7 @@ contract LicenseMarketplace {
         string fileName;
         string description;
         string category;
-        string fileHash;
+        string fileCid;
         bool isPublic;
         uint256 createdAt;
     }
@@ -60,8 +60,8 @@ contract LicenseMarketplace {
     uint256 public fileId;
     uint256 public requestId;
 
-    event FileShared(address indexed  owner, string fileName, string fileHash, bool isPublic);
-    event FileLicense(address indexed  owner, address indexed  buyer, string fileName, string fileHash);
+    event FileShared(address indexed  owner, string fileName, string fileCid, bool isPublic);
+    event FileLicense(address indexed  owner, address indexed  buyer, string fileName, string fileCid);
     event userSignedUp(address indexed userAddress, string username);
     event userLoggedIn(address indexed userAddress, string username);
     event LicenseRequestCreated(uint256 indexed requestId, uint256 fileId, address requester, address fileOwner);
@@ -75,7 +75,7 @@ contract LicenseMarketplace {
     }
 
     modifier onlyOwner(){
-        require(msg.sender == owner, "Only the owner can call this function");
+        require(msg.sender == owner,  "Only the owner can call this function");
         _;
     }
 
@@ -83,7 +83,7 @@ contract LicenseMarketplace {
         owner = msg.sender;
     }
 
-    function createFile(string memory _fileName, string memory _description, string memory _category,  string memory _fileHash, bool  _isPublic) external{
+    function createFile(string memory _fileName, string memory _description, string memory _category,  string memory _fileCid, bool  _isPublic) external{
         fileId++;
 
         File memory newFile = File({
@@ -92,7 +92,7 @@ contract LicenseMarketplace {
             fileName: _fileName,
             description: _description,
             category: _category,
-            fileHash: _fileHash,
+            fileCid: _fileCid,
             isPublic: _isPublic,
             createdAt: block.timestamp
         });
@@ -102,7 +102,7 @@ contract LicenseMarketplace {
         if(_isPublic) {
             publicFiles.push(newFile);
         }
-        emit FileShared(msg.sender, _fileName, _fileHash, _isPublic);
+        emit FileShared(msg.sender, _fileName, _fileCid, _isPublic);
     }
 
     function requestLicense(uint256 _fileId, address _fileOwner) external {
@@ -138,14 +138,14 @@ contract LicenseMarketplace {
             fileName: file.fileName,
             description: file.description,
             category: file.category,
-            fileHash: file.fileHash,
+            fileCid: file.fileCid,
             isPublic: file.isPublic,
             createdAt: block.timestamp
         });
 
         fileLicenses[request.requester].push(newLicense);
 
-        emit FileLicense(file.fileOwner, request.requester, file.fileName, file.fileHash);
+        emit FileLicense(file.fileOwner, request.requester, file.fileName, file.fileCid);
         emit LicenseRequestApproved(_requestId, request.fileId, request.requester, request.fileOwner);
     }
 
@@ -294,7 +294,7 @@ contract LicenseMarketplace {
         return userRequests;
     }
 
-    function getFileOwnerLicenseRequests() external view returns (LicenseRequest[] memory) {
+   function getFileOwnerLicenseRequests() external view returns (LicenseRequest[] memory) {
         uint256 count = 0;
         for (uint256 i = 1; i <= requestId; i++) {
             if (licenseRequests[i].fileOwner == msg.sender) {
@@ -312,5 +312,26 @@ contract LicenseMarketplace {
         }
 
         return ownerRequests;
-    }
+   }
+
+   function isFileOwnedOrLicensed(address _user, uint256 _fileId) external view returns (bool) {
+        for (uint256 i = 0; i < userFiles[_user].length; i++) {
+            if (userFiles[_user][i].id == _fileId) {
+                return true;
+            }
+        }
+
+        for (uint256 j = 0; j < fileLicenses[_user].length; j++) {
+            if (fileLicenses[_user][j].fileId == _fileId) {
+                return true;
+            }
+        }
+
+        return false;
+   }
+
+
+   function getFileId() external view returns (uint256) {
+        return fileId + 1;
+   }
 }

@@ -47,7 +47,7 @@ const formSchema = z.object({
       .min(1, {
          message: "Файлын дэлгэрэнгүй тайлбар оруулна уу.",
       })
-      .max(160, {
+      .max(500, {
          message: "Файлын дэлгэрэнгүй тайлбар оруулна уу.",
       }),
    category: z.string({ required_error: "Файлын төрлийг сонгоно уу." }),
@@ -168,7 +168,7 @@ export default function Page() {
             chain: "ethereum",
             file: file,
             litNodeClient: litNodeClient,
-            readme: "Use IPFS CID of this file to decrypt it",
+            readme: "Encrypted file",
          });
 
          const encryptedBlob = new Blob([encryptedZip], {

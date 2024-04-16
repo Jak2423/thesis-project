@@ -21,7 +21,6 @@ import { UploadedFile } from "@/lib/type";
 import { convertTimestampToDate, formatAddress } from "@/lib/utils";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
-import { useState } from "react";
 import {
    useAccount,
    useReadContract,
@@ -30,7 +29,6 @@ import {
 } from "wagmi";
 
 export default function Page({ params }: { params: { id: string } }) {
-   const [fileHash, setFileHash] = useState("");
    const { isConnected, address } = useAccount();
 
    const { writeContract, isPending, data: hash } = useWriteContract();
@@ -57,13 +55,6 @@ export default function Page({ params }: { params: { id: string } }) {
          });
       }
    }
-   // useEffect(() => {
-   //    isSuccess &&
-   //       saveAs(
-   //          `https://silver-patient-falcon-52.mypinata.cloud/ipfs/${fileHash}`,
-   //          `licensed.pdf`,
-   //       );
-   // }, [isSuccess]);
 
    return (
       <main className="flex h-full w-full flex-col items-start px-8">
@@ -71,7 +62,7 @@ export default function Page({ params }: { params: { id: string } }) {
             <div className="mb-8 grid w-full grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-3">
                <div className="col-span-1">
                   <PdfThumbnail
-                     url={`https://silver-patient-falcon-52.mypinata.cloud/ipfs/${file.fileHash}`}
+                     url={`https://silver-patient-falcon-52.mypinata.cloud/ipfs/${file.fileCid}`}
                   />
                </div>
                <div className="col-span-1 md:col-span-2">
@@ -109,24 +100,22 @@ export default function Page({ params }: { params: { id: string } }) {
                      <AlertDialogContent>
                         <AlertDialogHeader>
                            <AlertDialogTitle className="dark:text-gray-50">
-                              Are you absolutely sure?
+                              Хүсэлт илгээх үү?
                            </AlertDialogTitle>
                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete your account and remove your
-                              data from our servers.
+                              Цахим бүтээлийн эзэмшигч лүү хүсэлт илгээх
                            </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                            <AlertDialogCancel className="dark:text-gray-50">
-                              Cancel
+                              Цуцлах
                            </AlertDialogCancel>
                            <AlertDialogAction
                               onClick={() =>
                                  requestLicense(file.id, file.fileOwner)
                               }
                            >
-                              Continue
+                              Илгээх
                            </AlertDialogAction>
                         </AlertDialogFooter>
                      </AlertDialogContent>

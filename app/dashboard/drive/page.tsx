@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ScreenHeader from "@/components/ui/screen-header";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
+import { useState } from "react";
 import {
    FaFileAudio,
    FaFileImage,
@@ -24,6 +25,7 @@ import { useAccount, useReadContract } from "wagmi";
 
 export default function Page() {
    const { address } = useAccount();
+   const [openModal, setOpenModal] = useState<boolean>(false);
    const { data: userFiles } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
@@ -37,9 +39,9 @@ export default function Page() {
          <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
             {userFiles &&
                userFiles.map((f, i) => (
-                  <Dialog key={i}>
+                  <Dialog key={i} open={openModal} onOpenChange={setOpenModal}>
                      <DialogTrigger asChild>
-                        <Card className="w-full transition-all duration-150 ease-in-out hover:opacity-70">
+                        <Card className="w-full transition-all duration-150 ease-in-out hover:cursor-pointer hover:opacity-70">
                            <CardHeader>
                               <CardTitle className="truncate">
                                  {f.fileName}
@@ -68,7 +70,11 @@ export default function Page() {
                         {/* <DialogHeader>
                            <DialogTitle>{f.fileName}</DialogTitle>
                         </DialogHeader> */}
-                        <PreviewFile cid={f.fileHash} type={f.category} />
+                        <PreviewFile
+                           cid={f.fileCid}
+                           type={f.category}
+                           setOpenModal={setOpenModal}
+                        />
                      </DialogContent>
                   </Dialog>
                ))}
