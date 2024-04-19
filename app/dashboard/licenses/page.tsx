@@ -26,14 +26,17 @@ import { ArrowRightIcon, DownloadIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
-import { useState } from "react";
-import { TbFileCertificate } from "react-icons/tb";
+import {
+   FaFileAudio,
+   FaFileImage,
+   FaFileLines,
+   FaFileVideo,
+} from "react-icons/fa6";
 
 import { useAccount, useReadContract } from "wagmi";
 
 export default function Page() {
    const { address } = useAccount();
-   const [openModal, setOpenModal] = useState(false);
    const { data: userLicenses } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
@@ -75,21 +78,25 @@ export default function Page() {
                            {l.description}
                         </CardDescription>
                      </CardHeader>
-                     <Dialog open={openModal} onOpenChange={setOpenModal}>
+                     <Dialog>
                         <DialogTrigger asChild>
                            <CardContent className="flex w-full items-center justify-center hover:cursor-pointer">
-                              <TbFileCertificate className="size-20" />
+                              {(l.category === "PDF" && (
+                                 <FaFileLines className="size-24" />
+                              )) ||
+                                 (l.category === "Image" && (
+                                    <FaFileImage className="size-24" />
+                                 )) ||
+                                 (l.category === "Video" && (
+                                    <FaFileVideo className="size-24" />
+                                 )) ||
+                                 (l.category === "Audio" && (
+                                    <FaFileAudio className="size-24" />
+                                 ))}
                            </CardContent>
                         </DialogTrigger>
                         <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-16 text-gray-100 backdrop-blur-sm dark:bg-transparent">
-                           {/* <DialogHeader>
-                              <DialogTitle>{l.fileName}</DialogTitle>
-                           </DialogHeader> */}
-                           <PreviewFile
-                              cid={l.fileCid}
-                              type={l.category}
-                              setOpenModal={setOpenModal}
-                           />
+                           <PreviewFile cid={l.fileCid} type={l.category} />
                         </DialogContent>
                      </Dialog>
                      <CardFooter className="flex justify-end">

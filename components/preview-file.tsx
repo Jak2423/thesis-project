@@ -8,11 +8,9 @@ import { useToast } from "./ui/use-toast";
 export default function PreviewFile({
    cid,
    type,
-   setOpenModal,
 }: {
    cid: string;
    type: string;
-   setOpenModal: any;
 }) {
    const [fileURl, setFileUrl] = useState<string | null>(null);
    const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -53,7 +51,6 @@ export default function PreviewFile({
             // downloadLink.download = metadata.name;
             // downloadLink.click();
          } catch (error) {
-            setOpenModal(false);
             toast({
                variant: "destructive",
                description: "Trouble decrypting file",

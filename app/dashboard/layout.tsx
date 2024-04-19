@@ -11,7 +11,7 @@ export default function Layout({
          <div className="h-full flex-none lg:z-50 lg:w-72">
             <SideNav />
          </div>
-         <div className="relative flex w-full flex-col">
+         <div className="flex w-full flex-col">
             <Header />
             {children}
          </div>

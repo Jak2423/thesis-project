@@ -5,7 +5,7 @@ import { Cross1Icon, HamburgerMenuIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { FiHardDrive, FiShoppingCart, FiUpload } from "react-icons/fi";
+import { FiFolder, FiHome, FiShoppingCart, FiUpload } from "react-icons/fi";
 import { IoTimeOutline } from "react-icons/io5";
 import { PiCertificate } from "react-icons/pi";
 import { Button } from "./ui/button";
@@ -13,9 +13,14 @@ import { Logo } from "./ui/logo";
 
 const links = [
    {
+      name: "Home",
+      href: "/dashboard",
+      icon: FiHome,
+   },
+   {
       name: "My drive",
       href: "/dashboard/drive",
-      icon: FiHardDrive,
+      icon: FiFolder,
    },
    {
       name: "Requests",

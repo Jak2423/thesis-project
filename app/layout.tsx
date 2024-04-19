@@ -1,7 +1,7 @@
-import { Providers } from "@/app/provider";
+import { Providers } from "@/app/providers";
 import { Toaster } from "@/components/ui/toaster";
-import "@rainbow-me/rainbowkit/styles.css";
 import type { Metadata } from "next";
+
 import "./globals.css";
 
 export const metadata: Metadata = {

@@ -3,16 +3,21 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiHardDrive, FiShoppingCart, FiUpload } from "react-icons/fi";
+import { FiFolder, FiHome, FiShoppingCart, FiUpload } from "react-icons/fi";
 import { IoTimeOutline } from "react-icons/io5";
 import { PiCertificate } from "react-icons/pi";
 import { Logo } from "./ui/logo";
 
 const links = [
    {
+      name: "Home",
+      href: "/dashboard",
+      icon: FiHome,
+   },
+   {
       name: "My drive",
       href: "/dashboard/drive",
-      icon: FiHardDrive,
+      icon: FiFolder,
    },
    {
       name: "Requests",
@@ -62,7 +67,7 @@ export default function SideNav() {
                      key={i}
                      href={l.href}
                      className={cn(
-                        "flex w-full items-center gap-x-2 rounded-md px-4 py-3 outline-1 outline-gray-200  hover:outline   dark:hover:outline-gray-800",
+                        "flex w-full items-center gap-x-2 rounded-md px-4 py-3 outline-1 outline-gray-200  hover:outline  dark:hover:outline-gray-800",
                         {
                            "bg-gray-100 outline outline-gray-200 dark:bg-gray-950 dark:outline-gray-800":
                               pathname === l.href,

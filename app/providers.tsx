@@ -6,14 +6,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { sepolia } from "wagmi/chains";
-import { injected } from "wagmi/connectors";
 
 const config = createConfig({
    chains: [sepolia],
-   connectors: [
-      injected({ target: "metaMask" }),
-      // walletConnect({ projectId: "095f374bd378a0011202d8c1e82b92d1" }),
-   ],
    transports: {
       [sepolia.id]: http(),
    },
@@ -39,7 +34,7 @@ export function Providers({
                <RainbowKitProvider
                   modalSize="compact"
                   theme={darkTheme({
-                     accentColor: "#222",
+                     accentColor: "#444",
                      borderRadius: "medium",
                   })}
                >

@@ -1,7 +1,6 @@
 "use client";
 
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
-import PdfThumbnail from "@/components/pdf-thumbnail";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
    AlertDialog,
@@ -21,6 +20,12 @@ import { UploadedFile } from "@/lib/type";
 import { convertTimestampToDate, formatAddress } from "@/lib/utils";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
+import {
+   FaFileAudio,
+   FaFileImage,
+   FaFileLines,
+   FaFileVideo,
+} from "react-icons/fa6";
 import {
    useAccount,
    useReadContract,
@@ -60,10 +65,21 @@ export default function Page({ params }: { params: { id: string } }) {
       <main className="flex h-full w-full flex-col items-start px-8">
          {file && (
             <div className="mb-8 grid w-full grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-3">
-               <div className="col-span-1">
-                  <PdfThumbnail
-                     url={`https://silver-patient-falcon-52.mypinata.cloud/ipfs/${file.fileCid}`}
-                  />
+               <div className="col-span-1 flex items-center justify-center">
+                  {(file.category === "PDF" && (
+                     <FaFileLines className="size-64" />
+                  )) ||
+                     FaFileLines(
+                        file.category === "Image" && (
+                           <FaFileImage className="size-64" />
+                        ),
+                     ) ||
+                     (file.category === "Video" && (
+                        <FaFileVideo className="size-64" />
+                     )) ||
+                     (file.category === "Audio" && (
+                        <FaFileAudio className="size-64" />
+                     ))}
                </div>
                <div className="col-span-1 md:col-span-2">
                   <h3 className="mb-8 flex items-center text-4xl font-bold">

@@ -12,7 +12,7 @@ import { Suspense, useEffect, useState } from "react";
 import {
    FaFileAudio,
    FaFileImage,
-   FaFilePdf,
+   FaFileLines,
    FaFileVideo,
 } from "react-icons/fa6";
 import { useAccount, useReadContract } from "wagmi";
@@ -72,7 +72,7 @@ export default function Page({
                            >
                               <div className="">
                                  {(f.category === "PDF" && (
-                                    <FaFilePdf className="size-24" />
+                                    <FaFileLines className="size-24" />
                                  )) ||
                                     (f.category === "Image" && (
                                        <FaFileImage className="size-24" />
@@ -112,7 +112,7 @@ export default function Page({
                                     key={i}
                                  >
                                     <div className="">
-                                       <FaFilePdf className="size-24" />
+                                       <FaFileLines className="size-24" />
                                     </div>
                                     <div className="flex w-full flex-col justify-start gap-y-1">
                                        <h3 className="truncate text-lg font-semibold tracking-tight">

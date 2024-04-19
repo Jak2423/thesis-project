@@ -13,11 +13,10 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ScreenHeader from "@/components/ui/screen-header";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
-import { useState } from "react";
 import {
    FaFileAudio,
    FaFileImage,
-   FaFilePdf,
+   FaFileLines,
    FaFileVideo,
 } from "react-icons/fa6";
 
@@ -25,7 +24,6 @@ import { useAccount, useReadContract } from "wagmi";
 
 export default function Page() {
    const { address } = useAccount();
-   const [openModal, setOpenModal] = useState<boolean>(false);
    const { data: userFiles } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
@@ -39,7 +37,7 @@ export default function Page() {
          <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
             {userFiles &&
                userFiles.map((f, i) => (
-                  <Dialog key={i} open={openModal} onOpenChange={setOpenModal}>
+                  <Dialog key={i}>
                      <DialogTrigger asChild>
                         <Card className="w-full transition-all duration-150 ease-in-out hover:cursor-pointer hover:opacity-70">
                            <CardHeader>
@@ -52,7 +50,7 @@ export default function Page() {
                            </CardHeader>
                            <CardContent className="flex w-full items-center justify-center pb-8">
                               {(f.category === "PDF" && (
-                                 <FaFilePdf className="size-24" />
+                                 <FaFileLines className="size-24" />
                               )) ||
                                  (f.category === "Image" && (
                                     <FaFileImage className="size-24" />
@@ -70,11 +68,7 @@ export default function Page() {
                         {/* <DialogHeader>
                            <DialogTitle>{f.fileName}</DialogTitle>
                         </DialogHeader> */}
-                        <PreviewFile
-                           cid={f.fileCid}
-                           type={f.category}
-                           setOpenModal={setOpenModal}
-                        />
+                        <PreviewFile cid={f.fileCid} type={f.category} />
                      </DialogContent>
                   </Dialog>
                ))}

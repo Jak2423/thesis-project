@@ -8,6 +8,7 @@ const nextConfig = {
          "canvas",
          "jsdom",
       );
+      config.resolve.fallback = { fs: false, net: false, tls: false };
       return config;
    },
 };
