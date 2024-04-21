@@ -12,4 +12,6 @@ const ScreenHeader = React.forwardRef<
    />
 ));
 
+ScreenHeader.displayName = "ScreenHeader";
+
 export { ScreenHeader };
