@@ -1,11 +1,13 @@
 "use client";
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { useEffect, useState } from "react";
-import PdfViewer from "./pdf-viewer";
+import { Document, Page, pdfjs } from "react-pdf";
 import Spinner from "./ui/spinner";
 import { useToast } from "./ui/use-toast";
 
-export default function PreviewFile({
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
+export default function ThumbnailFile({
    cid,
    type,
 }: {
@@ -62,29 +64,51 @@ export default function PreviewFile({
    }, [cid]);
 
    return (
-      <div className="flex items-center justify-center overflow-auto ">
+      <div className="flex items-center justify-center overflow-auto blur-sm">
          {isLoading && <Spinner className="h-10 w-10" />}
-         {fileURl &&
-            ((type === "PDF" && (
-               <div className="mx-auto flex w-full max-w-[450px] flex-col items-center justify-center">
-                  <PdfViewer url={fileURl} />
-               </div>
-            )) ||
-               (type === "Video" && (
-                  <video className="h-auto w-full max-w-6xl" controls>
-                     <source src={fileURl} type="video/mp4" />
-                  </video>
-               )) ||
-               (type === "Image" && (
-                  <img
-                     src={fileURl}
-                     alt="image"
-                     className="pointer-events-none w-full "
+         {(fileURl && type === "PDF" && (
+            <div className="mx-auto flex w-full max-w-[450px] flex-col items-center justify-center">
+               <Document
+                  file={fileURl}
+                  onContextMenu={(e) => e.preventDefault()}
+                  className="flex gap-x-2 overflow-auto"
+               >
+                  <Page
+                     pageNumber={1}
+                     renderTextLayer={false}
+                     renderAnnotationLayer={false}
                   />
-               )) ||
-               (type === "Audio" && (
-                  <audio src={fileURl} controls className="w-full" />
-               )))}
+               </Document>
+            </div>
+         )) ||
+            (type === "Video" && (
+               <video
+                  className="pointer-events-none h-auto w-full max-w-6xl"
+                  controls
+               >
+                  <source src={fileURl} type="video/mp4" />
+               </video>
+            )) ||
+            (type === "Image" && (
+               <img
+                  src={fileURl}
+                  alt="image"
+                  className="pointer-events-none w-full "
+               />
+            )) ||
+            (type === "Audio" && (
+               <audio
+                  src={fileURl}
+                  controls
+                  className="pointer-events-none w-full"
+               >
+                  <source
+                     src={fileURl}
+                     type="video/mp4"
+                     className="pointer-events-none"
+                  />
+               </audio>
+            ))}
       </div>
    );
 }

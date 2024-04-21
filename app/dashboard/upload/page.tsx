@@ -42,17 +42,11 @@ const formSchema = z.object({
    fileName: z.string().min(1, {
       message: "Файлын нэрийг оруулна уу.",
    }),
-   description: z
-      .string()
-      .min(1, {
-         message: "Файлын дэлгэрэнгүй тайлбар оруулна уу.",
-      })
-      .max(500, {
-         message: "Файлын дэлгэрэнгүй тайлбар оруулна уу.",
-      }),
+   description: z.string().min(1, {
+      message: "Файлын дэлгэрэнгүй тайлбар оруулна уу.",
+   }),
    category: z.string({ required_error: "Файлын төрлийг сонгоно уу." }),
    uploadedFile: z.any(),
-   isPublic: z.boolean(),
 });
 
 export default function Page() {
@@ -99,12 +93,28 @@ export default function Page() {
       defaultValues: {
          fileName: "",
          description: "",
-         isPublic: true,
       },
    });
 
    function handleUploadFile(event: ChangeEvent<HTMLInputElement>) {
       const selectedFile = event.target.files?.[0];
+      const maxFileSize = 52428800;
+
+      if (selectedFile && selectedFile.size > maxFileSize) {
+         toast({
+            variant: "destructive",
+            description: "File size exceeds the maximum limit of 50MB.",
+         });
+         event.target.value = "";
+
+         if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+         }
+
+         setFile(null);
+         return;
+      }
+
       if (selectedFile) {
          setFile(selectedFile);
       }
@@ -177,6 +187,7 @@ export default function Page() {
          const encryptedFile = new File([encryptedBlob], file.name);
 
          const res = await pinFileToIPFS(encryptedFile);
+         console.log(res);
 
          if (!res.isDuplicate) {
             writeContract({
@@ -189,7 +200,7 @@ export default function Page() {
                   data.description,
                   data.category,
                   res.IpfsHash,
-                  data.isPublic,
+                  true,
                ],
             });
 
@@ -214,7 +225,7 @@ export default function Page() {
    }
 
    return (
-      <main className="mx-auto flex w-full flex-col items-start px-8 lg:max-w-screen-lg lg:px-0">
+      <main className="flex w-full flex-col items-start px-8">
          {isLoading && (
             <Alert className="fixed bottom-2.5 left-2.5 right-2.5 w-auto md:left-auto md:w-1/3">
                <Spinner className="h-5 w-5" />
@@ -333,25 +344,6 @@ export default function Page() {
                         </FormItem>
                      )}
                   />
-                  {/* <FormField
-                  control={form.control}
-                  name="isPublic"
-                  render={({ field }) => (
-                     <FormItem className="flex flex-col">
-                        <FormLabel>Visibility</FormLabel>
-                        <FormControl>
-                           <Switch
-                              name={field.name}
-                              id={field.name}
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                           />
-                        </FormControl>
-                        <FormMessage />
-                     </FormItem>
-                  )}
-               /> */}
-
                   <CardFooter className="border-t px-0 pb-0 pt-8 dark:border-gray-800">
                      <Button
                         type="submit"

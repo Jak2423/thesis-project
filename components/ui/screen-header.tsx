@@ -1,5 +1,15 @@
-export default function ScreenHeader({ title }: { title: string }) {
-   return (
-      <h1 className="mb-8 flex items-center text-2xl font-bold">{title}</h1>
-   );
-}
+import { cn } from "@/lib/utils";
+import React from "react";
+
+const ScreenHeader = React.forwardRef<
+   HTMLParagraphElement,
+   React.HTMLAttributes<HTMLHeadingElement>
+>(({ className, ...props }, ref) => (
+   <h1
+      ref={ref}
+      className={cn("flex items-center text-2xl font-semibold", className)}
+      {...props}
+   />
+));
+
+export { ScreenHeader };

@@ -3,7 +3,7 @@
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import ScreenHeader from "@/components/ui/screen-header";
+import { ScreenHeader } from "@/components/ui/screen-header";
 import Spinner from "@/components/ui/spinner";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { FileRequest } from "@/lib/type";
@@ -62,7 +62,7 @@ export default function Page() {
 
    return (
       <main className="flex w-full flex-col items-start px-8">
-         <ScreenHeader title="Pending Requests" />
+         <ScreenHeader className="mb-8">Pending Requests</ScreenHeader>
          <div className="flex w-full flex-col gap-y-4">
             {requests &&
                requests.toReversed().map((r, i) => (
@@ -73,7 +73,7 @@ export default function Page() {
                      <div className="flex w-full flex-col justify-start gap-y-1">
                         <h4 className="text-ellipsis text-lg leading-none tracking-tight">
                            Customer: {formatAddress(r.requester)} is requesting
-                           access for File id: {Number(r.fileId)} file.
+                           access for File id: {Number(r.fileId)}.
                         </h4>
                      </div>
                      {r.isApproved ? (
@@ -83,7 +83,6 @@ export default function Page() {
                            </span>
                         </p>
                      ) : (
-                        // <p className="text-sm font-semibold">Approved</p>
                         <div className="flex items-center gap-x-4">
                            <Button
                               size="icon"

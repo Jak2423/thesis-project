@@ -18,7 +18,7 @@ import {
    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Logo } from "@/components/ui/logo";
-import ScreenHeader from "@/components/ui/screen-header";
+import { ScreenHeader } from "@/components/ui/screen-header";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { License } from "@/lib/type";
 import { convertTimestampToDate } from "@/lib/utils";
@@ -67,10 +67,10 @@ export default function Page() {
 
    return (
       <main className="flex w-full flex-col items-start px-8  ">
-         <ScreenHeader title="My Licenses" />
+         <ScreenHeader className="mb-8">My Licenses</ScreenHeader>
          <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4  lg:grid-cols-5">
             {userLicenses &&
-               userLicenses.map((l, i) => (
+               userLicenses.toReversed().map((l, i) => (
                   <Card className="w-full" key={i}>
                      <CardHeader>
                         <CardTitle className="truncate">{l.fileName}</CardTitle>

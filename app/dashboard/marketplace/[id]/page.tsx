@@ -1,6 +1,7 @@
 "use client";
 
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
+import ThumbnailFile from "@/components/thumbnail-file";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
    AlertDialog,
@@ -14,6 +15,7 @@ import {
    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Spinner from "@/components/ui/spinner";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
@@ -69,11 +71,9 @@ export default function Page({ params }: { params: { id: string } }) {
                   {(file.category === "PDF" && (
                      <FaFileLines className="size-64" />
                   )) ||
-                     FaFileLines(
-                        file.category === "Image" && (
-                           <FaFileImage className="size-64" />
-                        ),
-                     ) ||
+                     (file.category === "Image" && (
+                        <FaFileImage className="size-64" />
+                     )) ||
                      (file.category === "Video" && (
                         <FaFileVideo className="size-64" />
                      )) ||
@@ -85,7 +85,7 @@ export default function Page({ params }: { params: { id: string } }) {
                   <h3 className="mb-8 flex items-center text-4xl font-bold">
                      {file.fileName}
                   </h3>
-                  <div className="mb-8 space-y-4">
+                  <div className="mb-8 flex flex-col space-y-4">
                      <p className="text-lg">
                         <span className="font-bold">Эзэмшигч: </span>
                         {formatAddress(file.fileOwner)}
@@ -103,39 +103,56 @@ export default function Page({ params }: { params: { id: string } }) {
                      </p>
                      <p className="text-sm">{file.description}</p>
                   </div>
-                  <AlertDialog>
-                     <AlertDialogTrigger asChild>
-                        <Button
-                           variant="outline"
-                           size="lg"
-                           disabled={isPending}
-                        >
-                           Хүсэлт илгээх
-                        </Button>
-                     </AlertDialogTrigger>
-                     <AlertDialogContent>
-                        <AlertDialogHeader>
-                           <AlertDialogTitle className="dark:text-gray-50">
-                              Хүсэлт илгээх үү?
-                           </AlertDialogTitle>
-                           <AlertDialogDescription>
-                              Цахим бүтээлийн эзэмшигч лүү хүсэлт илгээх
-                           </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                           <AlertDialogCancel className="dark:text-gray-50">
-                              Цуцлах
-                           </AlertDialogCancel>
-                           <AlertDialogAction
-                              onClick={() =>
-                                 requestLicense(file.id, file.fileOwner)
-                              }
-                           >
-                              Илгээх
-                           </AlertDialogAction>
-                        </AlertDialogFooter>
-                     </AlertDialogContent>
-                  </AlertDialog>
+                  <div className="flex max-w-40 flex-col gap-y-4">
+                     {file.category === "PDF" && (
+                        <Dialog>
+                           <DialogTrigger asChild>
+                              <Button
+                                 size="lg"
+                                 variant="outline"
+                                 disabled={isPending}
+                              >
+                                 Бүтээлийн хэсгээс
+                              </Button>
+                           </DialogTrigger>
+                           <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-16 text-gray-100 backdrop-blur-sm dark:bg-transparent">
+                              <ThumbnailFile
+                                 cid={file.fileCid}
+                                 type={file.category}
+                              />
+                           </DialogContent>
+                        </Dialog>
+                     )}
+                     <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                           <Button size="lg" disabled={isPending}>
+                              Хүсэлт илгээх
+                           </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                           <AlertDialogHeader>
+                              <AlertDialogTitle className="dark:text-gray-50">
+                                 Хүсэлт илгээх үү?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                 Цахим бүтээлийн эзэмшигч лүү хүсэлт илгээх
+                              </AlertDialogDescription>
+                           </AlertDialogHeader>
+                           <AlertDialogFooter>
+                              <AlertDialogCancel className="dark:text-gray-50">
+                                 Цуцлах
+                              </AlertDialogCancel>
+                              <AlertDialogAction
+                                 onClick={() =>
+                                    requestLicense(file.id, file.fileOwner)
+                                 }
+                              >
+                                 Илгээх
+                              </AlertDialogAction>
+                           </AlertDialogFooter>
+                        </AlertDialogContent>
+                     </AlertDialog>
+                  </div>
                </div>
             </div>
          )}

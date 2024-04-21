@@ -2,6 +2,7 @@
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/ui/screen-header";
 import { CardsSkeleton } from "@/components/ui/skeletons";
 import {
    Table,
@@ -55,7 +56,8 @@ export default function Page() {
 
    return (
       <main className="flex w-full flex-col items-start px-8">
-         <div className="flex w-full  flex-col items-center justify-center gap-y-4">
+         <ScreenHeader className="mb-8">Dashboard</ScreenHeader>
+         <div className="flex w-full flex-col items-center justify-center gap-y-8">
             <div className="relative grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
                {isLoading ? (
                   <CardsSkeleton />
@@ -116,16 +118,14 @@ export default function Page() {
                               .toReversed()
                               .map((file) => (
                                  <TableRow key={file.id}>
-                                    <TableCell className="">
+                                    <TableCell className="line-clamp-1">
                                        {file.fileName}
                                     </TableCell>
-                                    <TableCell className="">
-                                       {file.category}
-                                    </TableCell>
-                                    <TableCell className="">
+                                    <TableCell>{file.category}</TableCell>
+                                    <TableCell className="line-clamp-1 leading-8">
                                        {file.description}
                                     </TableCell>
-                                    <TableCell className="">
+                                    <TableCell>
                                        {format(
                                           convertTimestampToDate(
                                              Number(file.createdAt),

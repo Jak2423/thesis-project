@@ -2,7 +2,7 @@
 
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
 import Search from "@/components/search";
-import ScreenHeader from "@/components/ui/screen-header";
+import { ScreenHeader } from "@/components/ui/screen-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
@@ -50,7 +50,7 @@ export default function Page({
 
    return (
       <main className="flex w-full flex-col items-start px-8">
-         <ScreenHeader title="Marketplace" />
+         <ScreenHeader className="mb-8">Marketplace</ScreenHeader>
          <Search placeholder="Хайх" />
          <Suspense>
             <Tabs defaultValue="all" className="w-full">
