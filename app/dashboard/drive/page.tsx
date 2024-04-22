@@ -122,7 +122,7 @@ export default function Page() {
                                  </CardContent>
                               </Card>
                            </DialogTrigger>
-                           <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-16 text-gray-100 backdrop-blur-sm dark:bg-transparent">
+                           <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-4 text-gray-100 backdrop-blur-sm dark:bg-transparent md:px-16">
                               <PreviewFile cid={f.fileCid} type={f.category} />
                            </DialogContent>
                         </Dialog>

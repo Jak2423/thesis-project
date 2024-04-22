@@ -1,7 +1,9 @@
 "use client";
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import PdfViewer from "./pdf-viewer";
+import { AspectRatio } from "./ui/aspect-ratio";
 import Spinner from "./ui/spinner";
 import { useToast } from "./ui/use-toast";
 
@@ -62,7 +64,7 @@ export default function PreviewFile({
    }, [cid]);
 
    return (
-      <div className="flex items-center justify-center overflow-auto ">
+      <div className="flex items-center justify-center overflow-auto">
          {isLoading && <Spinner className="h-10 w-10" />}
          {fileURl &&
             ((type === "PDF" && (
@@ -71,16 +73,19 @@ export default function PreviewFile({
                </div>
             )) ||
                (type === "Video" && (
-                  <video className="h-auto w-full max-w-6xl" controls>
-                     <source src={fileURl} type="video/mp4" />
-                  </video>
+                  <AspectRatio ratio={16 / 9}>
+                     <video src={fileURl} controls />
+                  </AspectRatio>
                )) ||
                (type === "Image" && (
-                  <img
-                     src={fileURl}
-                     alt="image"
-                     className="pointer-events-none w-full "
-                  />
+                  <AspectRatio ratio={16 / 9}>
+                     <Image
+                        src={fileURl}
+                        alt="image"
+                        fill
+                        className="pointer-events-none object-cover"
+                     />
+                  </AspectRatio>
                )) ||
                (type === "Audio" && (
                   <audio src={fileURl} controls className="w-full" />

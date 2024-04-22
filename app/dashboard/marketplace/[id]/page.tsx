@@ -104,25 +104,23 @@ export default function Page({ params }: { params: { id: string } }) {
                      <p className="text-sm">{file.description}</p>
                   </div>
                   <div className="flex max-w-40 flex-col gap-y-4">
-                     {file.category === "PDF" && (
-                        <Dialog>
-                           <DialogTrigger asChild>
-                              <Button
-                                 size="lg"
-                                 variant="outline"
-                                 disabled={isPending}
-                              >
-                                 Бүтээлийн хэсгээс
-                              </Button>
-                           </DialogTrigger>
-                           <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-16 text-gray-100 backdrop-blur-sm dark:bg-transparent">
-                              <ThumbnailFile
-                                 cid={file.fileCid}
-                                 type={file.category}
-                              />
-                           </DialogContent>
-                        </Dialog>
-                     )}
+                     <Dialog>
+                        <DialogTrigger asChild>
+                           <Button
+                              size="lg"
+                              variant="outline"
+                              disabled={isPending}
+                           >
+                              Бүтээлийн хэсгээс
+                           </Button>
+                        </DialogTrigger>
+                        <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-16 text-gray-100 backdrop-blur-sm dark:bg-transparent">
+                           <ThumbnailFile
+                              cid={file.fileCid}
+                              type={file.category}
+                           />
+                        </DialogContent>
+                     </Dialog>
                      <AlertDialog>
                         <AlertDialogTrigger asChild>
                            <Button size="lg" disabled={isPending}>

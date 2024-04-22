@@ -6,12 +6,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { sepolia } from "wagmi/chains";
+import { injected } from "wagmi/connectors";
 
 const config = createConfig({
    chains: [sepolia],
    transports: {
       [sepolia.id]: http(),
    },
+   connectors: [injected()],
    ssr: true,
 });
 
@@ -34,8 +36,9 @@ export function Providers({
                <RainbowKitProvider
                   modalSize="compact"
                   theme={darkTheme({
-                     accentColor: "#444",
+                     accentColor: "#FAFAFA",
                      borderRadius: "medium",
+                     accentColorForeground: "#000",
                   })}
                >
                   {children}
