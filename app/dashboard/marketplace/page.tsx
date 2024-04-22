@@ -64,7 +64,7 @@ export default function Page({
                <TabsContent value="all">
                   <div className="mb-8 flex w-full flex-col gap-y-4">
                      {filteredFiles &&
-                        filteredFiles.map((f, i) => (
+                        filteredFiles.toReversed().map((f, i) => (
                            <Link
                               href={`/dashboard/marketplace/${f.id}`}
                               className="flex w-full items-center gap-x-2 border-b border-gray-800 py-4"
@@ -103,7 +103,7 @@ export default function Page({
                <TabsContent value="pdf">
                   <div className="mb-8 flex w-full flex-col gap-y-4">
                      {filteredFiles &&
-                        filteredFiles.map(
+                        filteredFiles.toReversed().map(
                            (f, i) =>
                               f.category === "PDF" && (
                                  <Link
@@ -134,7 +134,7 @@ export default function Page({
                <TabsContent value="image">
                   <div className="mb-8 flex w-full flex-col gap-y-4">
                      {filteredFiles &&
-                        filteredFiles.map(
+                        filteredFiles.toReversed().map(
                            (f, i) =>
                               f.category === "Image" && (
                                  <Link
@@ -165,7 +165,7 @@ export default function Page({
                <TabsContent value="video">
                   <div className="mb-8 flex w-full flex-col gap-y-4">
                      {filteredFiles &&
-                        filteredFiles.map(
+                        filteredFiles.toReversed().map(
                            (f, i) =>
                               f.category === "Video" && (
                                  <Link
@@ -196,7 +196,7 @@ export default function Page({
                <TabsContent value="audio">
                   <div className="mb-8 flex w-full flex-col gap-y-4">
                      {filteredFiles &&
-                        filteredFiles.map(
+                        filteredFiles.toReversed().map(
                            (f, i) =>
                               f.category === "Audio" && (
                                  <Link

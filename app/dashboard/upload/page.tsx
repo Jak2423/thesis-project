@@ -32,6 +32,7 @@ import { useForm } from "react-hook-form";
 import {
    useAccount,
    useConnect,
+   useReadContract,
    useWaitForTransactionReceipt,
    useWriteContract,
 } from "wagmi";
@@ -88,6 +89,14 @@ export default function Page() {
    });
    const { isConnected, address } = useAccount();
 
+   const { data: fileId, refetch } = useReadContract({
+      address: licenseValidationContract.contractAddress as `0x${string}`,
+
+      abi: licenseValidationAbi.abi,
+
+      functionName: "getFileId",
+   }) as { data: number; refetch: any };
+
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
@@ -139,6 +148,46 @@ export default function Page() {
       return res.json();
    }
 
+   const createAccessControlCondition = (id: string) => {
+      return [
+         {
+            contractAddress: licenseValidationContract.contractAddress,
+            chain: "sepolia",
+            functionName: "isFileOwnedOrLicensed",
+            functionParams: [":userAddress", id],
+            functionAbi: {
+               inputs: [
+                  {
+                     internalType: "address",
+                     name: "_user",
+                     type: "address",
+                  },
+                  {
+                     internalType: "uint256",
+                     name: "_fileId",
+                     type: "uint256",
+                  },
+               ],
+               name: "isFileOwnedOrLicensed",
+               outputs: [
+                  {
+                     internalType: "bool",
+                     name: "isOwned",
+                     type: "bool",
+                  },
+               ],
+               stateMutability: "view",
+               type: "function",
+            },
+            returnValueTest: {
+               key: "isOwned",
+               comparator: "=",
+               value: "true",
+            },
+         },
+      ];
+   };
+
    async function onSubmit(data: z.infer<typeof formSchema>) {
       if (!isConnected) {
          connect({ connector: injected() });
@@ -148,34 +197,20 @@ export default function Page() {
             return;
          }
          setUploading(true);
-         const litNodeClient = new LitJsSdk.LitNodeClient({
-            litNetwork: "cayenne",
-         });
+         const litNodeClient = new LitJsSdk.LitNodeClient({});
 
          await litNodeClient.connect();
          const authSig = await LitJsSdk.checkAndSignAuthMessage({
-            chain: "ethereum",
+            chain: "sepolia",
             nonce: litNodeClient.getLatestBlockhash() as string,
          });
 
-         const accs = [
-            {
-               contractAddress: "",
-               standardContractType: "",
-               chain: "ethereum",
-               method: "eth_getBalance",
-               parameters: [":userAddress", "latest"],
-               returnValueTest: {
-                  comparator: ">=",
-                  value: "0",
-               },
-            },
-         ];
+         console.log(Number(fileId));
 
          const encryptedZip = await LitJsSdk.encryptFileAndZipWithMetadata({
-            accessControlConditions: accs,
+            evmContractConditions: createAccessControlCondition(String(fileId)),
             authSig,
-            chain: "ethereum",
+            chain: "sepolia",
             file: file,
             litNodeClient: litNodeClient,
             readme: "Encrypted file",
@@ -187,7 +222,6 @@ export default function Page() {
          const encryptedFile = new File([encryptedBlob], file.name);
 
          const res = await pinFileToIPFS(encryptedFile);
-         console.log(res);
 
          if (!res.isDuplicate) {
             writeContract({
@@ -219,6 +253,7 @@ export default function Page() {
          }
 
          setUploading(false);
+         refetch();
       } catch (error) {
          console.error(error);
       }

@@ -27,12 +27,10 @@ export default function PreviewFile({
             );
             const file = await fileRes.blob();
 
-            const litNodeClient = new LitJsSdk.LitNodeClient({
-               litNetwork: "cayenne",
-            });
+            const litNodeClient = new LitJsSdk.LitNodeClient({});
             await litNodeClient.connect();
             const authSig = await LitJsSdk.checkAndSignAuthMessage({
-               chain: "ethereum",
+               chain: "sepolia",
                nonce: litNodeClient.getLatestBlockhash() as string,
             });
 
