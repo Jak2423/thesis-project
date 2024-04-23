@@ -98,7 +98,7 @@ export default function Page() {
                   <Table containerClassname="overflow-x-auto relative">
                      <TableHeader>
                         <TableRow>
-                           <TableHead className="w-3/12 px-2 py-1 font-semibold">
+                           <TableHead className="w-2/12 px-2 py-1 font-semibold">
                               Name
                            </TableHead>
                            <TableHead className="w-1/12 px-2 py-1 font-semibold">

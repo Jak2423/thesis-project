@@ -1,5 +1,6 @@
 "use client";
 
+import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
@@ -20,13 +21,13 @@ export default function Page() {
    };
 
    useEffect(() => {
-      if (isConnected) {
-         router.push("/dashboard");
-      }
+      // if (isConnected) {
+      //    router.push("/dashboard");
+      // }
    }, [isConnected, router]);
 
    return (
-      <main className="">
+      <main className="flex w-full flex-col ">
          <section className="h-screen">
             <header className="fixed top-0 z-20 flex w-full justify-center border-b border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-950">
                <div className="flex w-full items-center justify-between px-8 py-6 md:px-16">
@@ -54,14 +55,17 @@ export default function Page() {
                </div>
             </header>
             <div className="grid h-full w-full grid-cols-1 items-center gap-x-8 gap-y-2 bg-gray-50 px-8 py-28 dark:bg-gray-950 md:grid-cols-2 md:px-16">
-               <div className="">
-                  <h1 className="mb-4 w-32 text-start text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-                     Лиценз Батлагаажуулалт
+               <div className="flex flex-col gap-y-6">
+                  <h1 className="text-start text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+                     Цахим бүтээлийн систем
                   </h1>
                   <p className="w-full pr-0 md:pr-24">
                      Блокчэйн технологиор дамжуулан цахим бүтээлийг хамгаалах,
                      хуваалцах, хандах зөвшөөрөл олгох систем.
                   </p>
+                  <Button className="w-full max-w-48 py-6">
+                     <Link href="/dashboard">Турших</Link>
+                  </Button>
                </div>
                <div>
                   <Image
@@ -75,11 +79,7 @@ export default function Page() {
                </div>
             </div>
          </section>
-         {/* <div className="flex w-full max-w-3xl items-center justify-center bg-transparent py-16">
-            <p className="font-thin text-gray-100">
-               &copy; {new Date().getFullYear()} Designed & Built by Jak.
-            </p>
-         </div> */}
+         <Footer />
       </main>
    );
 }
