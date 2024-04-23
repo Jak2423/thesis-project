@@ -11,7 +11,7 @@ contract LicenseMarketplace {
         string description;
         string category;
         string fileCid;
-        bool isPublic;
+        uint256 fileSize;
         uint256 createdAt;
    }
 
@@ -24,7 +24,7 @@ contract LicenseMarketplace {
         string description;
         string category;
         string fileCid;
-        bool isPublic;
+        uint256 fileSize;
         uint256 createdAt;
    }
 
@@ -47,8 +47,8 @@ contract LicenseMarketplace {
       uint256 public fileId;
       uint256 public requestId;
 
-      event FileShared(address indexed  owner, string fileName, string fileCid, bool isPublic);
-      event FileLicense(address indexed  owner, address indexed  buyer, string fileName, string fileCid);
+      event FileShared(address indexed  owner, string fileName);
+      event FileLicense(address indexed  owner, address indexed  buyer, string fileName);
       event LicenseRequestCreated(uint256 indexed requestId, uint256 fileId, address requester, address fileOwner);
       event LicenseRequestApproved(uint256 indexed requestId, uint256 fileId, address requester, address fileOwner);
       event LicenseRequestRejected(uint256 indexed requestId, uint256 fileId, address requester, address fileOwner);
@@ -62,7 +62,7 @@ contract LicenseMarketplace {
          owner = msg.sender;
       }
 
-      function createFile(string memory _fileName, string memory _description, string memory _category,  string memory _fileCid, bool  _isPublic) external{
+      function createFile(string memory _fileName, string memory _description, string memory _category,  string memory _fileCid, uint256  _fileSize) external{
          fileId++;
 
          File memory newFile = File({
@@ -72,19 +72,19 @@ contract LicenseMarketplace {
             description: _description,
             category: _category,
             fileCid: _fileCid,
-            isPublic: _isPublic,
+            fileSize: _fileSize,
             createdAt: block.timestamp
          });
 
          userFiles[msg.sender].push(newFile);
+         publicFiles.push(newFile);
 
-         if(_isPublic) {
-            publicFiles.push(newFile);
-         }
-         emit FileShared(msg.sender, _fileName, _fileCid, _isPublic);
+         emit FileShared(msg.sender, _fileName);
       }
 
       function requestLicense(uint256 _fileId, address _fileOwner) external {
+         require(!isFileOwnedOrLicensed(msg.sender, _fileId), "User already owns or has a license for this file");
+
          requestId++;
          LicenseRequest memory newRequest = LicenseRequest({
             requestId: requestId,
@@ -118,13 +118,13 @@ contract LicenseMarketplace {
             description: file.description,
             category: file.category,
             fileCid: file.fileCid,
-            isPublic: file.isPublic,
+            fileSize: file.fileSize,
             createdAt: block.timestamp
          });
 
          fileLicenses[request.requester].push(newLicense);
 
-         emit FileLicense(file.fileOwner, request.requester, file.fileName, file.fileCid);
+         emit FileLicense(file.fileOwner, request.requester, file.fileName);
          emit LicenseRequestApproved(_requestId, request.fileId, request.requester, request.fileOwner);
       }
 
@@ -149,46 +149,9 @@ contract LicenseMarketplace {
          return fileLicenses[msg.sender];
       }
 
-      function getPublicFilesExceptUser() external view returns (File[] memory) {
-      uint256 senderFilesCount = userFiles[msg.sender].length;
-      uint256 totalPublicFilesCount = publicFiles.length;
-
-      uint256 excludedFilesCount = senderFilesCount;
-      for (uint256 i = 0; i < fileLicenses[msg.sender].length; i++) {
-         if (fileLicenses[msg.sender][i].isPublic) {
-               excludedFilesCount++;
-         }
-      }
-
-      File[] memory result = new File[](totalPublicFilesCount - excludedFilesCount);
-      uint256 index = 0;
-
-      for (uint256 i = 0; i < totalPublicFilesCount; i++) {
-         bool isUserFile = false;
-         bool hasUserLicense = false;
-
-         for (uint256 j = 0; j < senderFilesCount; j++) {
-               if (publicFiles[i].id == userFiles[msg.sender][j].id) {
-                  isUserFile = true;
-                  break;
-               }
-         }
-
-         for (uint256 k = 0; k < fileLicenses[msg.sender].length; k++) {
-               if (publicFiles[i].id == fileLicenses[msg.sender][k].fileId) {
-                  hasUserLicense = true;
-                  break;
-               }
-         }
-
-         if (!isUserFile && !hasUserLicense) {
-               result[index] = publicFiles[i];
-               index++;
-         }
-      }
-
-      return result;
-   }
+    function getPublicFiles() external view returns (File[] memory) {
+        return publicFiles;
+    }
 
       function generateUniqueLicense() internal returns (uint256) {
          uint256 randomNumber = uint256(keccak256(abi.encodePacked(block.timestamp, blockhash(block.number), msg.sender)));
@@ -257,7 +220,7 @@ contract LicenseMarketplace {
          return ownerRequests;
    }
 
-   function isFileOwnedOrLicensed(address _user, uint256 _fileId) external view returns (bool) {
+   function isFileOwnedOrLicensed(address _user, uint256 _fileId) public view returns (bool) {
          for (uint256 i = 0; i < userFiles[_user].length; i++) {
             if (userFiles[_user][i].id == _fileId) {
                   return true;

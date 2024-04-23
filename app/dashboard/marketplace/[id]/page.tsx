@@ -1,7 +1,6 @@
 "use client";
 
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
-import ThumbnailFile from "@/components/thumbnail-file";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
    AlertDialog,
@@ -15,7 +14,6 @@ import {
    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Spinner from "@/components/ui/spinner";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
@@ -88,7 +86,9 @@ export default function Page({ params }: { params: { id: string } }) {
                   <div className="mb-8 flex flex-col space-y-4">
                      <p className="text-lg">
                         <span className="font-bold">Эзэмшигч: </span>
-                        {formatAddress(file.fileOwner)}
+                        {file.fileOwner === address
+                           ? "You"
+                           : formatAddress(file.fileOwner)}
                      </p>
                      <p className="text-lg">
                         <span className="font-bold">Төрөл: </span>
@@ -104,26 +104,12 @@ export default function Page({ params }: { params: { id: string } }) {
                      <p className="text-sm">{file.description}</p>
                   </div>
                   <div className="flex max-w-40 flex-col gap-y-4">
-                     <Dialog>
-                        <DialogTrigger asChild>
-                           <Button
-                              size="lg"
-                              variant="outline"
-                              disabled={isPending}
-                           >
-                              Бүтээлийн хэсгээс
-                           </Button>
-                        </DialogTrigger>
-                        <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-16 text-gray-100 backdrop-blur-sm dark:bg-transparent">
-                           <ThumbnailFile
-                              cid={file.fileCid}
-                              type={file.category}
-                           />
-                        </DialogContent>
-                     </Dialog>
                      <AlertDialog>
                         <AlertDialogTrigger asChild>
-                           <Button size="lg" disabled={isPending}>
+                           <Button
+                              size="lg"
+                              disabled={isPending || file.fileOwner === address}
+                           >
                               Хүсэлт илгээх
                            </Button>
                         </AlertDialogTrigger>

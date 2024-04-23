@@ -24,8 +24,8 @@ import Spinner from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import licenseValidationContract from "@/contracts/contractAddress.json";
+import lit from "@/lib/lit";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { ChangeEvent, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -172,46 +172,6 @@ export default function Page() {
       return res.json();
    }
 
-   const createAccessControlCondition = (id: string) => {
-      return [
-         {
-            contractAddress: licenseValidationContract.contractAddress,
-            chain: "sepolia",
-            functionName: "isFileOwnedOrLicensed",
-            functionParams: [":userAddress", id],
-            functionAbi: {
-               inputs: [
-                  {
-                     internalType: "address",
-                     name: "_user",
-                     type: "address",
-                  },
-                  {
-                     internalType: "uint256",
-                     name: "_fileId",
-                     type: "uint256",
-                  },
-               ],
-               name: "isFileOwnedOrLicensed",
-               outputs: [
-                  {
-                     internalType: "bool",
-                     name: "isOwned",
-                     type: "bool",
-                  },
-               ],
-               stateMutability: "view",
-               type: "function",
-            },
-            returnValueTest: {
-               key: "isOwned",
-               comparator: "=",
-               value: "true",
-            },
-         },
-      ];
-   };
-
    async function onSubmit(data: z.infer<typeof formSchema>) {
       if (!isConnected) {
          connect({ connector: injected() });
@@ -221,30 +181,8 @@ export default function Page() {
             return;
          }
          setUploading(true);
-         const litNodeClient = new LitJsSdk.LitNodeClient({});
 
-         await litNodeClient.connect();
-         const authSig = await LitJsSdk.checkAndSignAuthMessage({
-            chain: "sepolia",
-            nonce: litNodeClient.getLatestBlockhash() as string,
-         });
-
-         console.log(Number(fileId));
-
-         const encryptedZip = await LitJsSdk.encryptFileAndZipWithMetadata({
-            evmContractConditions: createAccessControlCondition(String(fileId)),
-            authSig,
-            chain: "sepolia",
-            file: file,
-            litNodeClient: litNodeClient,
-            readme: "Encrypted file",
-         });
-
-         const encryptedBlob = new Blob([encryptedZip], {
-            type: "text/plain",
-         });
-         const encryptedFile = new File([encryptedBlob], file.name);
-
+         const encryptedFile = await lit.encryptFile(String(fileId), file);
          const res = await pinFileToIPFS(encryptedFile);
 
          if (!res.isDuplicate) {
@@ -258,7 +196,7 @@ export default function Page() {
                   data.description,
                   data.category,
                   res.IpfsHash,
-                  true,
+                  file.size,
                ],
             });
 

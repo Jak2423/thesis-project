@@ -70,7 +70,7 @@ export default function ThumbnailFile({
          {isLoading && <Spinner className="h-10 w-10" />}
          {fileURl &&
             ((type === "PDF" && (
-               <div className="mx-auto flex w-full max-w-[450px] flex-col items-center justify-center blur-sm">
+               <div className="mx-auto flex w-full max-w-[450px] flex-col items-center justify-center">
                   <Document
                      file={fileURl}
                      onContextMenu={(e) => e.preventDefault()}
@@ -95,7 +95,7 @@ export default function ThumbnailFile({
                         src={fileURl}
                         alt="image"
                         fill
-                        className="pointer-events-none object-cover blur-sm"
+                        className="pointer-events-none object-cover"
                      />
                   </AspectRatio>
                )) ||

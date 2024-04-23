@@ -6,7 +6,7 @@ export type License = {
    description: string,
    category: string,
    fileCid: string,
-   isPublic: boolean,
+   fileSize: number,
    createdAt: number,
 }
 
@@ -17,7 +17,7 @@ export type UploadedFile = {
    description: string,
    category: string,
    fileCid: string,
-   isPublic: boolean,
+   fileSize: number,
    createdAt: number,
 }
 

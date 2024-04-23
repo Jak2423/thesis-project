@@ -31,7 +31,7 @@ export default function Page({
    const { data: marketFiles } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
-      functionName: "getPublicFilesExceptUser",
+      functionName: "getPublicFiles",
       account: address,
    }) as { data: UploadedFile[] };
 
@@ -90,7 +90,10 @@ export default function Page({
                                  </h3>
 
                                  <h4 className="text-ellipsis text-sm leading-none tracking-tight">
-                                    Owner: {formatAddress(f.fileOwner)}
+                                    Owner:{" "}
+                                    {f.fileOwner === address
+                                       ? "You"
+                                       : formatAddress(f.fileOwner)}
                                  </h4>
                                  <p className="line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
                                     {f.description}
@@ -120,7 +123,10 @@ export default function Page({
                                        </h3>
 
                                        <h4 className="text-ellipsis text-sm leading-none tracking-tight">
-                                          Owner: {formatAddress(f.fileOwner)}
+                                          Owner:{" "}
+                                          {f.fileOwner === address
+                                             ? "You"
+                                             : formatAddress(f.fileOwner)}
                                        </h4>
                                        <p className="line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
                                           {f.description}
@@ -151,7 +157,10 @@ export default function Page({
                                        </h3>
 
                                        <h4 className="text-ellipsis text-sm leading-none tracking-tight">
-                                          Owner: {formatAddress(f.fileOwner)}
+                                          Owner:{" "}
+                                          {f.fileOwner === address
+                                             ? "You"
+                                             : formatAddress(f.fileOwner)}
                                        </h4>
                                        <p className="line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
                                           {f.description}
@@ -182,7 +191,10 @@ export default function Page({
                                        </h3>
 
                                        <h4 className="text-ellipsis text-sm leading-none tracking-tight">
-                                          Owner: {formatAddress(f.fileOwner)}
+                                          Owner:{" "}
+                                          {f.fileOwner === address
+                                             ? "You"
+                                             : formatAddress(f.fileOwner)}
                                        </h4>
                                        <p className="line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
                                           {f.description}
@@ -213,7 +225,10 @@ export default function Page({
                                        </h3>
 
                                        <h4 className="text-ellipsis text-sm leading-none tracking-tight">
-                                          Owner: {formatAddress(f.fileOwner)}
+                                          Owner:{" "}
+                                          {f.fileOwner === address
+                                             ? "You"
+                                             : formatAddress(f.fileOwner)}
                                        </h4>
                                        <p className="line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
                                           {f.description}

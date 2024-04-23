@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
-import { convertTimestampToDate } from "@/lib/utils";
+import { convertTimestampToDate, formatBytes } from "@/lib/utils";
 import { format } from "date-fns";
 import Link from "next/link";
 
@@ -107,6 +107,9 @@ export default function Page() {
                            <TableHead className="w-6/12 px-2 py-1 font-semibold">
                               Description
                            </TableHead>
+                           <TableHead className="w-1/12 px-2 py-1 font-semibold">
+                              Size
+                           </TableHead>
                            <TableHead className="w-2/5 px-2 py-1 font-semibold">
                               When
                            </TableHead>
@@ -124,6 +127,9 @@ export default function Page() {
                                     <TableCell>{file.category}</TableCell>
                                     <TableCell className="line-clamp-1 leading-8">
                                        {file.description}
+                                    </TableCell>
+                                    <TableCell>
+                                       {formatBytes(Number(file.fileSize))}
                                     </TableCell>
                                     <TableCell>
                                        {format(

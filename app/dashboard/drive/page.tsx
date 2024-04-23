@@ -11,11 +11,20 @@ import {
 } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ScreenHeader } from "@/components/ui/screen-header";
+import {
+   Table,
+   TableBody,
+   TableCell,
+   TableHead,
+   TableHeader,
+   TableRow,
+} from "@/components/ui/table";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
-import { formatAddress } from "@/lib/utils";
+import { convertTimestampToDate, formatBytes } from "@/lib/utils";
+import { format } from "date-fns";
 import {
    FaFileAudio,
    FaFileImage,
@@ -50,46 +59,62 @@ export default function Page() {
                </TabsList>
             </div>
             <TabsContent value="list">
-               <div className="mb-8 flex w-full flex-col gap-y-4">
-                  {userFiles &&
-                     userFiles.toReversed().map((f, i) => (
-                        <Dialog key={i}>
-                           <DialogTrigger asChild>
-                              <div className="flex w-full items-center gap-x-2 border-b border-gray-800 py-4">
-                                 <div className="">
-                                    {(f.category === "PDF" && (
-                                       <FaFileLines className="size-24" />
-                                    )) ||
-                                       (f.category === "Image" && (
-                                          <FaFileImage className="size-24" />
-                                       )) ||
-                                       (f.category === "Video" && (
-                                          <FaFileVideo className="size-24" />
-                                       )) ||
-                                       (f.category === "Audio" && (
-                                          <FaFileAudio className="size-24" />
-                                       ))}
-                                 </div>
-                                 <div className="flex w-full flex-col justify-start gap-y-1">
-                                    <h3 className="truncate text-lg font-semibold tracking-tight">
+               <Table containerClassname="overflow-x-auto relative">
+                  <TableHeader>
+                     <TableRow>
+                        <TableHead className="w-2/12 px-2 py-1 font-semibold">
+                           Name
+                        </TableHead>
+                        <TableHead className="w-1/12 px-2 py-1 font-semibold">
+                           Category
+                        </TableHead>
+                        <TableHead className="w-6/12 px-2 py-1 font-semibold">
+                           Description
+                        </TableHead>
+                        <TableHead className="w-1/12 px-2 py-1 font-semibold">
+                           Size
+                        </TableHead>
+                        <TableHead className="w-2/5 px-2 py-1 font-semibold">
+                           When
+                        </TableHead>
+                     </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                     {userFiles &&
+                        userFiles.toReversed().map((f, i) => (
+                           <Dialog key={i}>
+                              <DialogTrigger asChild>
+                                 <TableRow key={f.id}>
+                                    <TableCell className="line-clamp-1">
                                        {f.fileName}
-                                    </h3>
-
-                                    <h4 className="text-ellipsis text-sm leading-none tracking-tight">
-                                       Owner: {formatAddress(f.fileOwner)}
-                                    </h4>
-                                    <p className="line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
+                                    </TableCell>
+                                    <TableCell>{f.category}</TableCell>
+                                    <TableCell className="line-clamp-1 leading-8">
                                        {f.description}
-                                    </p>
-                                 </div>
-                              </div>
-                           </DialogTrigger>
-                           <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-16 text-gray-100 backdrop-blur-sm dark:bg-transparent">
-                              <PreviewFile cid={f.fileCid} type={f.category} />
-                           </DialogContent>
-                        </Dialog>
-                     ))}
-               </div>
+                                    </TableCell>
+                                    <TableCell>
+                                       {formatBytes(Number(f.fileSize))}
+                                    </TableCell>
+                                    <TableCell>
+                                       {format(
+                                          convertTimestampToDate(
+                                             Number(f.createdAt),
+                                          ),
+                                          "PPpp",
+                                       )}
+                                    </TableCell>
+                                 </TableRow>
+                              </DialogTrigger>
+                              <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-16 text-gray-100 backdrop-blur-sm dark:bg-transparent">
+                                 <PreviewFile
+                                    cid={f.fileCid}
+                                    type={f.category}
+                                 />
+                              </DialogContent>
+                           </Dialog>
+                        ))}
+                  </TableBody>
+               </Table>
             </TabsContent>
             <TabsContent value="grid">
                <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">

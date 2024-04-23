@@ -16,6 +16,15 @@ export function formatAddress(addr: string) {
    return `${addr?.substring(0, 7)}...${addr?.substring(addr.length - 4, addr.length)}`;
 };
 
+export function formatBytes(bytes: number, decimals?: number) {
+   if (bytes == 0) return '0 Bytes';
+   var k = 1024,
+      dm = decimals || 2,
+      sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+      i = Math.floor(Math.log(bytes) / Math.log(k));
+   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
 export function calculateFileHash(file: File): Promise<string> {
    return new Promise((resolve, reject) => {
       const reader = new FileReader();

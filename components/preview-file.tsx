@@ -1,5 +1,5 @@
 "use client";
-import * as LitJsSdk from "@lit-protocol/lit-node-client";
+import lit from "@/lib/lit";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import PdfViewer from "./pdf-viewer";
@@ -27,19 +27,8 @@ export default function PreviewFile({
             );
             const file = await fileRes.blob();
 
-            const litNodeClient = new LitJsSdk.LitNodeClient({});
-            await litNodeClient.connect();
-            const authSig = await LitJsSdk.checkAndSignAuthMessage({
-               chain: "sepolia",
-               nonce: litNodeClient.getLatestBlockhash() as string,
-            });
+            const decryptedFile = await lit.decryptFile(file);
 
-            const { decryptedFile, metadata } =
-               await LitJsSdk.decryptZipFileWithMetadata({
-                  file: file,
-                  litNodeClient: litNodeClient,
-                  authSig: authSig,
-               });
             const blob = new Blob([decryptedFile], {
                type: "application/octet-stream",
             });
