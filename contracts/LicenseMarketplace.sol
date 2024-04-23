@@ -11,6 +11,7 @@ contract LicenseMarketplace {
         string description;
         string category;
         string fileCid;
+        string imgUrl;
         uint256 fileSize;
         uint256 createdAt;
    }
@@ -24,6 +25,7 @@ contract LicenseMarketplace {
         string description;
         string category;
         string fileCid;
+        string imgUrl;
         uint256 fileSize;
         uint256 createdAt;
    }
@@ -62,7 +64,7 @@ contract LicenseMarketplace {
          owner = msg.sender;
       }
 
-      function createFile(string memory _fileName, string memory _description, string memory _category,  string memory _fileCid, uint256  _fileSize) external{
+      function createFile(string memory _fileName, string memory _description, string memory _category,  string memory _fileCid, uint256  _fileSize, string memory _imgUrl) external{
          fileId++;
 
          File memory newFile = File({
@@ -72,6 +74,7 @@ contract LicenseMarketplace {
             description: _description,
             category: _category,
             fileCid: _fileCid,
+            imgUrl: _imgUrl,
             fileSize: _fileSize,
             createdAt: block.timestamp
          });
@@ -118,6 +121,7 @@ contract LicenseMarketplace {
             description: file.description,
             category: file.category,
             fileCid: file.fileCid,
+            imgUrl: file.imgUrl,
             fileSize: file.fileSize,
             createdAt: block.timestamp
          });

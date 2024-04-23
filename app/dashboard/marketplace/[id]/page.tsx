@@ -72,9 +72,16 @@ export default function Page({ params }: { params: { id: string } }) {
                      (file.category === "Image" && (
                         <FaFileImage className="size-64" />
                      )) ||
-                     (file.category === "Video" && (
-                        <FaFileVideo className="size-64" />
-                     )) ||
+                     (file.category === "Video" &&
+                        (file.imgUrl ? (
+                           <img
+                              src={`${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/${file.imgUrl}`}
+                              alt=""
+                              className="w-full"
+                           />
+                        ) : (
+                           <FaFileVideo className="size-64" />
+                        ))) ||
                      (file.category === "Audio" && (
                         <FaFileAudio className="size-64" />
                      ))}

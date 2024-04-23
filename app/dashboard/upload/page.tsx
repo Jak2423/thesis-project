@@ -29,6 +29,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { ChangeEvent, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { pdfjs } from "react-pdf";
 import {
    useAccount,
    useConnect,
@@ -38,6 +39,8 @@ import {
 } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { z } from "zod";
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 const formSchema = z.object({
    fileName: z.string().min(1, {
@@ -54,6 +57,7 @@ const formSchema = z.object({
 export default function Page() {
    const [uploading, setUploading] = useState(false);
    const [file, setFile] = useState<File | null>(null);
+   const [imgUrl, setImgUrl] = useState(null);
    const [thumbnail, setThumbnail] = useState<File | null>(null);
    const { connect } = useConnect();
    const { toast } = useToast();
@@ -106,7 +110,41 @@ export default function Page() {
       },
    });
 
-   function handleUploadFile(event: ChangeEvent<HTMLInputElement>) {
+   async function getThumbnailForVideo(videoUrl: string, fileName: string) {
+      const video = document.createElement("video");
+      const canvas = document.createElement("canvas");
+      video.style.display = "none";
+      canvas.style.display = "none";
+
+      await new Promise<void>((resolve, reject) => {
+         video.addEventListener("loadedmetadata", () => {
+            video.width = video.videoWidth;
+            video.height = video.videoHeight;
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            video.currentTime = video.duration * 0.1;
+         });
+         video.addEventListener("seeked", () => resolve());
+         video.src = videoUrl;
+      });
+
+      canvas
+         .getContext("2d")
+         .drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+
+      return new Promise((resolve) => {
+         canvas.toBlob((blob) => {
+            const file = new File([blob], `${fileName}_thumbnail.png`, {
+               type: "image/png",
+            });
+            resolve(file);
+         }, "image/png");
+      });
+   }
+
+   async function getImageFromPDF(pdfUrl: string, fileName: string) {}
+
+   async function handleUploadFile(event: ChangeEvent<HTMLInputElement>) {
       const selectedFile = event.target.files?.[0];
       const maxFileSize = 52428800;
 
@@ -116,19 +154,17 @@ export default function Page() {
             description: "File size exceeds the maximum limit of 50MB.",
          });
          event.target.value = "";
-
          if (fileInputRef.current) {
             fileInputRef.current.value = "";
          }
-
          setFile(null);
          return;
       }
-
       if (selectedFile) {
          setFile(selectedFile);
       }
    }
+
    function handleUploadThumbnail(event: ChangeEvent<HTMLInputElement>) {
       const selectedFile = event.target.files?.[0];
       const maxFileSize = 10485760;
@@ -174,18 +210,48 @@ export default function Page() {
 
    async function onSubmit(data: z.infer<typeof formSchema>) {
       if (!isConnected) {
-         connect({ connector: injected() });
-      }
-      try {
-         if (!file) {
+         try {
+            await connect({ connector: injected() });
+         } catch (error) {
+            console.error("Error connecting wallet:", error);
+            toast({
+               variant: "destructive",
+               description: "Failed to connect wallet. Please try again.",
+            });
             return;
          }
-         setUploading(true);
+      }
+
+      if (!file) {
+         toast({
+            variant: "destructive",
+            description: "Please select a file to upload.",
+         });
+         return;
+      }
+
+      setUploading(true);
+
+      try {
+         let thumbnailRes = null;
+         if (data.category === "Video") {
+            const fileUrl = URL.createObjectURL(file);
+            const thumbnail = await getThumbnailForVideo(fileUrl, file.name);
+            thumbnailRes = await pinFileToIPFS(thumbnail as File);
+         }
 
          const encryptedFile = await lit.encryptFile(String(fileId), file);
          const res = await pinFileToIPFS(encryptedFile);
 
-         if (!res.isDuplicate) {
+         if (res.isDuplicate) {
+            if (fileInputRef.current) {
+               fileInputRef.current.value = "";
+            }
+            toast({
+               variant: "destructive",
+               description: "This file has already been uploaded.",
+            });
+         } else {
             writeContract({
                abi: licenseValidationAbi.abi,
                address:
@@ -197,27 +263,33 @@ export default function Page() {
                   data.category,
                   res.IpfsHash,
                   file.size,
+                  thumbnailRes?.IpfsHash || "",
                ],
             });
 
             if (isSuccess) {
                form.reset();
+               toast({
+                  description:
+                     "File uploaded and contract written successfully.",
+               });
+            } else {
+               toast({
+                  variant: "destructive",
+                  description: "Failed to write to contract. Please try again.",
+               });
             }
-         } else {
-            if (fileInputRef.current) {
-               fileInputRef.current.value = "";
-            }
-
-            toast({
-               variant: "destructive",
-               description: "This file has already been uploaded.",
-            });
          }
-
+      } catch (error) {
+         console.error("Error uploading file:", error);
+         toast({
+            variant: "destructive",
+            description:
+               "An error occurred while uploading the file. Please try again.",
+         });
+      } finally {
          setUploading(false);
          refetch();
-      } catch (error) {
-         console.error(error);
       }
    }
 
