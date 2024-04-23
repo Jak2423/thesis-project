@@ -48,15 +48,18 @@ const formSchema = z.object({
    }),
    category: z.string({ required_error: "Файлын төрлийг сонгоно уу." }),
    uploadedFile: z.any(),
+   thumbnail: z.any(),
 });
 
 export default function Page() {
    const [uploading, setUploading] = useState(false);
    const [file, setFile] = useState<File | null>(null);
+   const [thumbnail, setThumbnail] = useState<File | null>(null);
    const { connect } = useConnect();
    const { toast } = useToast();
    const [acceptedFileType, setAcceptedFileType] = useState<string>("");
    const fileInputRef = useRef<HTMLInputElement>(null);
+   const thumbnailInputRef = useRef<HTMLInputElement>(null);
 
    function handleCategoryChange(selectedCategory: string) {
       switch (selectedCategory) {
@@ -91,9 +94,7 @@ export default function Page() {
 
    const { data: fileId, refetch } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
-
       abi: licenseValidationAbi.abi,
-
       functionName: "getFileId",
    }) as { data: number; refetch: any };
 
@@ -126,6 +127,29 @@ export default function Page() {
 
       if (selectedFile) {
          setFile(selectedFile);
+      }
+   }
+   function handleUploadThumbnail(event: ChangeEvent<HTMLInputElement>) {
+      const selectedFile = event.target.files?.[0];
+      const maxFileSize = 10485760;
+
+      if (selectedFile && selectedFile.size > maxFileSize) {
+         toast({
+            variant: "destructive",
+            description: "File size exceeds the maximum limit of 10MB.",
+         });
+         event.target.value = "";
+
+         if (thumbnailInputRef.current) {
+            thumbnailInputRef.current.value = "";
+         }
+
+         setThumbnail(null);
+         return;
+      }
+
+      if (selectedFile) {
+         setThumbnail(selectedFile);
       }
    }
 
@@ -324,6 +348,26 @@ export default function Page() {
                            <FormLabel>Description</FormLabel>
                            <FormControl>
                               <Textarea className="resize-none" {...field} />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+                  <FormField
+                     control={form.control}
+                     name="thumbnail"
+                     render={({ field: { value, onChange, ...field } }) => (
+                        <FormItem>
+                           <FormLabel>Thumbnail image</FormLabel>
+                           <FormControl>
+                              <Input
+                                 {...field}
+                                 type="file"
+                                 accept="image/*"
+                                 onChange={handleUploadThumbnail}
+                                 ref={thumbnailInputRef}
+                                 className="file:text-gray-900 file:dark:text-gray-200"
+                              />
                            </FormControl>
                            <FormMessage />
                         </FormItem>
