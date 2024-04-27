@@ -13,6 +13,7 @@ import {
    AlertDialogTitle,
    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
 import licenseValidationContract from "@/contracts/contractAddress.json";
@@ -20,6 +21,7 @@ import { UploadedFile } from "@/lib/type";
 import { convertTimestampToDate, formatAddress } from "@/lib/utils";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
+import Image from "next/image";
 import {
    FaFileAudio,
    FaFileImage,
@@ -74,11 +76,16 @@ export default function Page({ params }: { params: { id: string } }) {
                      )) ||
                      (file.category === "Video" &&
                         (file.imgUrl ? (
-                           <img
-                              src={`${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/${file.imgUrl}`}
-                              alt=""
-                              className="w-full"
-                           />
+                           <AspectRatio ratio={16 / 9}>
+                              <Image
+                                 src={`${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/${file.imgUrl}`}
+                                 alt={file.fileName}
+                                 priority={true}
+                                 sizes="100vw"
+                                 fill
+                                 className="h-auto w-full object-cover"
+                              />
+                           </AspectRatio>
                         ) : (
                            <FaFileVideo className="size-64" />
                         ))) ||

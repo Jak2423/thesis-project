@@ -141,10 +141,6 @@ contract LicenseMarketplace {
          emit LicenseRequestRejected(_requestId, request.fileId, request.requester, request.fileOwner);
       }
 
-      function getAllPublicFiles() external view returns(File[] memory) {
-         return publicFiles;
-      }
-
       function getAllUserFiles() external view returns(File[] memory) {
          return userFiles[msg.sender];
       }

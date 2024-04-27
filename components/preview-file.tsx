@@ -65,14 +65,14 @@ export default function PreviewFile({
                   </AspectRatio>
                )) ||
                (type === "Image" && (
-                  <AspectRatio ratio={16 / 9}>
+                  <div className="relative h-full w-full max-w-3xl">
                      <Image
                         src={fileURl}
                         alt="image"
                         fill
-                        className="pointer-events-none object-cover"
+                        className="pointer-events-none object-contain"
                      />
-                  </AspectRatio>
+                  </div>
                )) ||
                (type === "Audio" && (
                   <audio src={fileURl} controls className="w-full" />

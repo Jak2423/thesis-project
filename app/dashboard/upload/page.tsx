@@ -27,7 +27,7 @@ import licenseValidationContract from "@/contracts/contractAddress.json";
 import lit from "@/lib/lit";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { pdfjs } from "react-pdf";
 import {
@@ -210,16 +210,7 @@ export default function Page() {
 
    async function onSubmit(data: z.infer<typeof formSchema>) {
       if (!isConnected) {
-         try {
-            await connect({ connector: injected() });
-         } catch (error) {
-            console.error("Error connecting wallet:", error);
-            toast({
-               variant: "destructive",
-               description: "Failed to connect wallet. Please try again.",
-            });
-            return;
-         }
+         connect({ connector: injected() });
       }
 
       if (!file) {
@@ -266,19 +257,6 @@ export default function Page() {
                   thumbnailRes?.IpfsHash || "",
                ],
             });
-
-            if (isSuccess) {
-               form.reset();
-               toast({
-                  description:
-                     "File uploaded and contract written successfully.",
-               });
-            } else {
-               toast({
-                  variant: "destructive",
-                  description: "Failed to write to contract. Please try again.",
-               });
-            }
          }
       } catch (error) {
          console.error("Error uploading file:", error);
@@ -292,6 +270,12 @@ export default function Page() {
          refetch();
       }
    }
+
+   useEffect(() => {
+      if (isSuccess) {
+         form.reset();
+      }
+   }, [isSuccess]);
 
    return (
       <main className="flex w-full flex-col items-start px-8">

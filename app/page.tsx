@@ -63,9 +63,9 @@ export default function Page() {
                      Блокчэйн технологиор дамжуулан цахим бүтээлийг хамгаалах,
                      хуваалцах, хандах зөвшөөрөл олгох систем.
                   </p>
-                  <Button className="w-full max-w-48 py-6">
-                     <Link href="/dashboard">Турших</Link>
-                  </Button>
+                  <Link href="/dashboard">
+                     <Button className="w-full max-w-48 py-6">Турших</Button>
+                  </Link>
                </div>
                <div>
                   <Image
@@ -74,6 +74,7 @@ export default function Page() {
                      width={0}
                      height={0}
                      sizes="100vw"
+                     priority={true}
                      className="h-auto w-full"
                   />
                </div>
