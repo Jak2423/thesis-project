@@ -59,12 +59,12 @@ export default function Page() {
                      </div>
                   </div>
                </div>
-               <div className="grid w-full grid-cols-1 items-center justify-center gap-x-8 px-8 pt-32 md:grid-cols-2 md:px-16 md:pt-0">
-                  <div className="flex flex-col gap-y-6">
+               <div className="grid w-full grid-cols-1 items-center justify-center gap-x-8 px-8 md:grid-cols-2 md:px-16 ">
+                  <div className="mt-32 flex flex-col gap-y-6 md:mt-0 ">
                      <h1 className="text-start text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
                         Цахим бүтээлийн систем
                      </h1>
-                     <p className="w-full pr-0 md:pr-24">
+                     <p className="w-full pr-0 text-gray-500 dark:text-gray-300 md:pr-24">
                         Блокчэйн технологиор дамжуулан цахим бүтээлийг
                         хамгаалах, хуваалцах, хандах зөвшөөрөл олгох систем.
                      </p>

@@ -138,7 +138,7 @@ export default function SideNav() {
             })}
          </div>
          <div className="mb-8 flex gap-x-2 px-6">
-            <Card className="flex w-full items-center justify-between rounded-md bg-gray-100 dark:bg-gray-900">
+            <Card className="flex w-full items-center justify-between rounded-md ">
                <CardHeader className="border-r border-gray-200 px-4 py-4 dark:border-gray-800">
                   <PiVaultFill className="size-6" />
                </CardHeader>

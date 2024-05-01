@@ -32,8 +32,17 @@ export default function Footer() {
                </li>
             ))}
          </ul>
-         <p className="text-sm font-extralight text-gray-700 dark:text-gray-300">
-            &copy; {new Date().getFullYear()} Designed & Built by Jak.
+         <p className="text-sm font-extralight text-gray-700 dark:text-gray-300 ">
+            &copy; {new Date().getFullYear()} Designed & Built by
+            <a
+               href="https://github.com/Jak2423"
+               target="_blank"
+               rel="noopener noreferrer"
+            >
+               <span className="hover:text-sem ml-1 transition-all duration-300 ease-linear hover:text-gray-950   hover:dark:text-gray-50">
+                  Jak.
+               </span>
+            </a>
          </p>
       </footer>
    );
