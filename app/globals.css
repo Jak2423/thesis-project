@@ -42,6 +42,17 @@ html {
    user-select: none;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+   -moz-appearance: textfield;
+}
+
 @media print {
    .react-pdf__Page__canvas {
       display: none;

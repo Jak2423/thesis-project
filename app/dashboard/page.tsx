@@ -121,7 +121,7 @@ export default function Page() {
                               .toReversed()
                               .map((file) => (
                                  <TableRow key={file.id}>
-                                    <TableCell className="line-clamp-1">
+                                    <TableCell className="line-clamp-1 leading-8">
                                        {file.fileName}
                                     </TableCell>
                                     <TableCell>{file.category}</TableCell>

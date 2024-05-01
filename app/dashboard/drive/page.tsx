@@ -9,8 +9,15 @@ import {
    CardHeader,
    CardTitle,
 } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+   Dialog,
+   DialogContent,
+   DialogHeader,
+   DialogTitle,
+   DialogTrigger,
+} from "@/components/ui/dialog";
 import { ScreenHeader } from "@/components/ui/screen-header";
+import { FileCardsSkeleton } from "@/components/ui/skeletons";
 import {
    Table,
    TableBody,
@@ -37,12 +44,12 @@ import { useAccount, useReadContract } from "wagmi";
 
 export default function Page() {
    const { address } = useAccount();
-   const { data: userFiles } = useReadContract({
+   const { data: userFiles, isLoading } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
       functionName: "getAllUserFiles",
       account: address,
-   }) as { data: UploadedFile[]; isLoading: boolean; error: any };
+   }) as { data: UploadedFile[]; isLoading: boolean };
 
    return (
       <main className="flex w-full flex-col items-start px-8">
@@ -85,7 +92,7 @@ export default function Page() {
                            <Dialog key={i}>
                               <DialogTrigger asChild>
                                  <TableRow key={f.id}>
-                                    <TableCell className="line-clamp-1">
+                                    <TableCell className="line-clamp-1 leading-8">
                                        {f.fileName}
                                     </TableCell>
                                     <TableCell>{f.category}</TableCell>
@@ -117,8 +124,11 @@ export default function Page() {
                </Table>
             </TabsContent>
             <TabsContent value="grid">
-               <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
-                  {userFiles &&
+               <div className="relative grid w-full grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
+                  {isLoading ? (
+                     <FileCardsSkeleton />
+                  ) : (
+                     userFiles &&
                      userFiles.toReversed().map((f, i) => (
                         <Dialog key={i}>
                            <DialogTrigger asChild>
@@ -147,11 +157,16 @@ export default function Page() {
                                  </CardContent>
                               </Card>
                            </DialogTrigger>
+
                            <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-4 text-gray-100 backdrop-blur-sm dark:bg-transparent md:px-16">
+                              <DialogHeader className="row-span-1">
+                                 <DialogTitle>{f.fileName}</DialogTitle>
+                              </DialogHeader>
                               <PreviewFile cid={f.fileCid} type={f.category} />
                            </DialogContent>
                         </Dialog>
-                     ))}
+                     ))
+                  )}
                </div>
             </TabsContent>
          </Tabs>

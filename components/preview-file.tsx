@@ -51,7 +51,7 @@ export default function PreviewFile({
    }, [cid]);
 
    return (
-      <div className="flex items-center justify-center overflow-auto">
+      <div className="row-span-11 flex items-center justify-center overflow-auto">
          {isLoading && <Spinner className="h-10 w-10" />}
          {fileURl &&
             ((type === "PDF" && (
@@ -65,7 +65,7 @@ export default function PreviewFile({
                   </AspectRatio>
                )) ||
                (type === "Image" && (
-                  <div className="relative h-full w-full max-w-3xl">
+                  <div className="relative h-full w-full max-w-4xl">
                      <Image
                         src={fileURl}
                         alt="image"

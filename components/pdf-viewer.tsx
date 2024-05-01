@@ -59,7 +59,7 @@ export default function PdfViewer({ url }: { url: string }) {
             >
                <ChevronLeftIcon className="size-5" />
             </Button>
-            <p>
+            <p className="flex w-24 items-center justify-center">
                {pageNumber} / {numPages}
             </p>
             <Button

@@ -9,6 +9,7 @@ export type License = {
    imgUrl: string,
    fileSize: number,
    createdAt: number,
+   price: number,
 }
 
 export type UploadedFile = {
@@ -21,6 +22,7 @@ export type UploadedFile = {
    imgUrl: string,
    fileSize: number,
    createdAt: number,
+   price: number,
 }
 
 export type FileRequest = {
@@ -29,4 +31,5 @@ export type FileRequest = {
    requester: string,
    fileOwner: string,
    isApproved: boolean,
+   assetPrice: number,
 }

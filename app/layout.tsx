@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
    return (
       <html lang="en" suppressHydrationWarning className={GeistSans.className}>
-         <body className="bg-gray-100 tracking-tight text-gray-950 antialiased dark:bg-gray-900 dark:text-white">
+         <body className="relative bg-gray-100 tracking-tight text-gray-950 antialiased dark:bg-gray-900 dark:text-white">
             <Providers>
                <div className="relative flex h-full min-h-screen w-full flex-col items-center leading-6">
                   <Toaster />

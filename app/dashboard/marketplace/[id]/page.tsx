@@ -28,6 +28,7 @@ import {
    FaFileLines,
    FaFileVideo,
 } from "react-icons/fa6";
+import { formatEther } from "viem";
 import {
    useAccount,
    useReadContract,
@@ -38,7 +39,7 @@ import {
 export default function Page({ params }: { params: { id: string } }) {
    const { isConnected, address } = useAccount();
 
-   const { writeContract, isPending, data: hash } = useWriteContract();
+   const { writeContract, isPending, data: hash, error } = useWriteContract();
 
    const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
       hash,
@@ -51,14 +52,15 @@ export default function Page({ params }: { params: { id: string } }) {
       args: [Number(params.id)],
    }) as { data: UploadedFile };
 
-   function requestLicense(id: number, owner: string) {
+   function requestLicense(id: number, owner: string, assetPrice: number) {
       if (isConnected) {
          writeContract({
             abi: licenseValidationAbi.abi,
             account: address,
             address: licenseValidationContract.contractAddress as `0x${string}`,
             functionName: "requestLicense",
-            args: [id, owner],
+            args: [id, owner, assetPrice],
+            value: assetPrice,
          });
       }
    }
@@ -116,6 +118,12 @@ export default function Page({ params }: { params: { id: string } }) {
                         )}
                      </p>
                      <p className="text-sm">{file.description}</p>
+                     <p>
+                        <span className="text-lg font-bold">Үнэ: </span>
+                        <span className="text-2xl">
+                           {formatEther(BigInt(file.price))} ETH
+                        </span>
+                     </p>
                   </div>
                   <div className="flex max-w-40 flex-col gap-y-4">
                      <AlertDialog>
@@ -124,7 +132,7 @@ export default function Page({ params }: { params: { id: string } }) {
                               size="lg"
                               disabled={isPending || file.fileOwner === address}
                            >
-                              Хүсэлт илгээх
+                              Худалдаж авах
                            </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
@@ -142,7 +150,11 @@ export default function Page({ params }: { params: { id: string } }) {
                               </AlertDialogCancel>
                               <AlertDialogAction
                                  onClick={() =>
-                                    requestLicense(file.id, file.fileOwner)
+                                    requestLicense(
+                                       file.id,
+                                       file.fileOwner,
+                                       file.price,
+                                    )
                                  }
                               >
                                  Илгээх

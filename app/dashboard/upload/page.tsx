@@ -27,6 +27,7 @@ import licenseValidationContract from "@/contracts/contractAddress.json";
 import lit from "@/lib/lit";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
+import { parseEther } from "ethers";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { pdfjs } from "react-pdf";
@@ -44,12 +45,15 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 
 const formSchema = z.object({
    fileName: z.string().min(1, {
-      message: "Файлын нэрийг оруулна уу.",
+      message: "Бүтээлийн нэрийг оруулна уу.",
    }),
    description: z.string().min(1, {
-      message: "Файлын дэлгэрэнгүй тайлбар оруулна уу.",
+      message: "Бүтээлийн дэлгэрэнгүй тайлбар оруулна уу.",
    }),
-   category: z.string({ required_error: "Файлын төрлийг сонгоно уу." }),
+   price: z.coerce
+      .number({ required_error: "Бүтээлийн үнийг оруулна уу." })
+      .gte(0),
+   category: z.string({ required_error: "Бүтээлийн төрлийг сонгоно уу." }),
    uploadedFile: z.any(),
    thumbnail: z.any(),
 });
@@ -255,6 +259,7 @@ export default function Page() {
                   res.IpfsHash,
                   file.size,
                   thumbnailRes?.IpfsHash || "",
+                  parseEther(String(data.price)),
                ],
             });
          }
@@ -326,7 +331,7 @@ export default function Page() {
                      name="fileName"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>Title</FormLabel>
+                           <FormLabel>Name</FormLabel>
                            <FormControl>
                               <Input {...field} />
                            </FormControl>
@@ -342,6 +347,19 @@ export default function Page() {
                            <FormLabel>Description</FormLabel>
                            <FormControl>
                               <Textarea className="resize-none" {...field} />
+                           </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                     )}
+                  />
+                  <FormField
+                     control={form.control}
+                     name="price"
+                     render={({ field }) => (
+                        <FormItem>
+                           <FormLabel>Price</FormLabel>
+                           <FormControl>
+                              <Input {...field} type="number" step="0.01" />
                            </FormControl>
                            <FormMessage />
                         </FormItem>

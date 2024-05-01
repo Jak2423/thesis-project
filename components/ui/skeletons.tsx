@@ -1,3 +1,11 @@
+import {
+   Card,
+   CardContent,
+   CardDescription,
+   CardHeader,
+   CardTitle,
+} from "./card";
+
 const shimmer =
    "before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:dark:via-gray-800/40  before:via-gray-200/40 before:to-transparent";
 
@@ -22,6 +30,32 @@ export function CardsSkeleton() {
          <CardSkeleton />
          <CardSkeleton />
          <CardSkeleton />
+      </>
+   );
+}
+
+export function FileCardSkeleton() {
+   return (
+      <Card className={`${shimmer} relative w-full overflow-hidden`}>
+         <CardHeader>
+            <CardTitle className="h-5 w-10 rounded-md bg-gray-100 dark:bg-gray-900" />
+            <CardDescription className="h-5 w-20 rounded-md bg-gray-100 dark:bg-gray-900" />
+         </CardHeader>
+         <CardContent className="flex w-full items-center justify-center pb-8">
+            <div className="h-24 w-20 rounded-md bg-gray-100 shadow  dark:bg-gray-900 " />
+         </CardContent>
+      </Card>
+   );
+}
+
+export function FileCardsSkeleton() {
+   return (
+      <>
+         <FileCardSkeleton />
+         <FileCardSkeleton />
+         <FileCardSkeleton />
+         <FileCardSkeleton />
+         <FileCardSkeleton />
       </>
    );
 }

@@ -15,10 +15,12 @@ import {
    Dialog,
    DialogContent,
    DialogHeader,
+   DialogTitle,
    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Logo } from "@/components/ui/logo";
 import { ScreenHeader } from "@/components/ui/screen-header";
+import { FileCardsSkeleton } from "@/components/ui/skeletons";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { License } from "@/lib/type";
 import { convertTimestampToDate } from "@/lib/utils";
@@ -37,12 +39,12 @@ import { useAccount, useReadContract } from "wagmi";
 
 export default function Page() {
    const { address } = useAccount();
-   const { data: userLicenses } = useReadContract({
+   const { data: userLicenses, isLoading } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
       functionName: "getAllUserLicenses",
       account: address,
-   }) as { data: License[] };
+   }) as { data: License[]; isLoading: boolean };
 
    function generatePDF(id: string) {
       const content = document.getElementById(id) as HTMLElement;
@@ -69,7 +71,10 @@ export default function Page() {
       <main className="flex w-full flex-col items-start px-8  ">
          <ScreenHeader className="mb-8">My Licenses</ScreenHeader>
          <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4  lg:grid-cols-5">
-            {userLicenses &&
+            {isLoading ? (
+               <FileCardsSkeleton />
+            ) : (
+               userLicenses &&
                userLicenses.toReversed().map((l, i) => (
                   <Card className="w-full" key={i}>
                      <CardHeader>
@@ -96,6 +101,9 @@ export default function Page() {
                            </CardContent>
                         </DialogTrigger>
                         <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-16 text-gray-100 backdrop-blur-sm dark:bg-transparent">
+                           <DialogHeader className="row-span-1">
+                              <DialogTitle>{l.fileName}</DialogTitle>
+                           </DialogHeader>
                            <PreviewFile cid={l.fileCid} type={l.category} />
                         </DialogContent>
                      </Dialog>
@@ -195,7 +203,8 @@ export default function Page() {
                         </Dialog>
                      </CardFooter>
                   </Card>
-               ))}
+               ))
+            )}
          </div>
       </main>
    );
