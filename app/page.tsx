@@ -9,7 +9,30 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { BiNetworkChart } from "react-icons/bi";
+import { PiCubeTransparent, PiLock } from "react-icons/pi";
 import { useAccount } from "wagmi";
+
+const features = [
+   {
+      title: "Decentralized storage",
+      description:
+         "Benefit from decentralized storage on the IPFS network, ensuring data availability and resilience against single points of failure.",
+      icon: BiNetworkChart,
+   },
+   {
+      title: "Secure file encryption",
+      description:
+         "Encrypt digital assets using Lit Protocol, ensuring end-to-end security and data privacy.",
+      icon: PiLock,
+   },
+   {
+      title: "Transparent transactions",
+      description:
+         "Leverage blockchain technology for transparent and auditable transactions, providing users with a trustless environment for digital asset management.",
+      icon: PiCubeTransparent,
+   },
+];
 
 export default function Page() {
    const router = useRouter();
@@ -29,9 +52,9 @@ export default function Page() {
    return (
       <>
          <main className="flex w-full flex-col">
-            <section className="h-screen">
+            <div className="h-screen">
                <div className="flex w-full items-center justify-center">
-                  <div className="md:px- flex w-full items-center  justify-between px-8 py-4 backdrop-blur-md  md:px-16">
+                  <div className="md:px- flex w-full items-center  justify-between px-8 py-4 md:px-16">
                      <div className="">
                         <Link
                            href={"/dashboard"}
@@ -85,7 +108,21 @@ export default function Page() {
                      className="hidden h-auto w-full md:block"
                   />
                </div>
-            </section>
+            </div>
+            <div className="mb-32 mt-16 grid grid-cols-1 gap-24 px-8 md:grid-cols-3 md:px-16">
+               {features.map((f) => (
+                  <div
+                     className="flex flex-col items-start gap-y-2"
+                     key={f.title}
+                  >
+                     <f.icon className="size-6" />
+                     <h3 className="text-lg font-semibold">{f.title}</h3>
+                     <p className="text-sm font-light  text-gray-500 dark:text-gray-300 ">
+                        {f.description}
+                     </p>
+                  </div>
+               ))}
+            </div>
             <Footer />
          </main>
          <div className="absolute left-0 top-0 -z-10 h-full w-full -scale-x-100 bg-[url('/images/background.webp')] bg-cover bg-right bg-no-repeat" />
