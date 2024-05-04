@@ -82,7 +82,7 @@ export default function Page({ params }: { params: { id: string } }) {
       <main className="flex h-full w-full flex-col items-start px-8">
          {file && (
             <div className="mb-8 grid w-full grid-cols-1 grid-rows-2 gap-x-8 gap-y-4 md:grid-cols-3 md:grid-rows-1">
-               <div className="col-span-1 flex items-center justify-center">
+               <div className="order-last col-span-1 flex items-center justify-center md:order-first">
                   {file.imgUrl ? (
                      <div className="relative h-full w-full">
                         <Image
@@ -96,16 +96,16 @@ export default function Page({ params }: { params: { id: string } }) {
                      </div>
                   ) : (
                      (file.category === "PDF" && (
-                        <FaFileLines className=" size-48 md:size-64" />
+                        <FaFileLines className="size-48 md:size-64" />
                      )) ||
                      (file.category === "Image" && (
-                        <FaFileImage className=" size-48 md:size-64" />
+                        <FaFileImage className="size-48 md:size-64" />
                      )) ||
                      (file.category === "Video" && (
-                        <FaFileVideo className=" size-48 md:size-64" />
+                        <FaFileVideo className="size-48 md:size-64" />
                      )) ||
                      (file.category === "Audio" && (
-                        <FaFileAudio className=" size-48 md:size-64" />
+                        <FaFileAudio className="size-48 md:size-64" />
                      ))
                   )}
                </div>
