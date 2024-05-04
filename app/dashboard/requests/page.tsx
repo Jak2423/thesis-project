@@ -91,7 +91,10 @@ export default function Page() {
                <TableBody>
                   {requests &&
                      requests.toReversed().map((r) => (
-                        <TableRow className="border-gray-200 dark:border-gray-800">
+                        <TableRow
+                           className="border-gray-200 dark:border-gray-800"
+                           key={r.requestId}
+                        >
                            <TableCell className="line-clamp-1 flex items-center gap-x-2 font-semibold leading-8">
                               {r.fileName}
                            </TableCell>
