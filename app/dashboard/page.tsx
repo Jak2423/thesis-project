@@ -98,13 +98,13 @@ export default function Page() {
                   <Table containerClassname="overflow-x-auto relative">
                      <TableHeader>
                         <TableRow>
-                           <TableHead className="w-2/12 px-2 py-1 font-semibold">
+                           <TableHead className="w-3/12 px-2 py-1 font-semibold">
                               Name
                            </TableHead>
                            <TableHead className="w-1/12 px-2 py-1 font-semibold">
-                              Category
+                              Type
                            </TableHead>
-                           <TableHead className="w-6/12 px-2 py-1 font-semibold">
+                           <TableHead className="w-5/12 px-2 py-1 font-semibold">
                               Description
                            </TableHead>
                            <TableHead className="w-1/12 px-2 py-1 font-semibold">
@@ -119,29 +119,32 @@ export default function Page() {
                         {userFiles &&
                            userFiles
                               .toReversed()
-                              .map((file) => (
-                                 <TableRow key={file.id}>
+                              .map((f) => (
+                                 <TableRow
+                                    key={f.id}
+                                    className="border-gray-200 dark:border-gray-800"
+                                 >
                                     <TableCell className="line-clamp-1 leading-8">
-                                       {file.fileName}
+                                       {f.fileName}
                                     </TableCell>
-                                    <TableCell>{file.category}</TableCell>
+                                    <TableCell>{f.category}</TableCell>
                                     <TableCell className="line-clamp-1 leading-8">
-                                       {file.description}
+                                       {f.description}
                                     </TableCell>
                                     <TableCell>
-                                       {formatBytes(Number(file.fileSize))}
+                                       {formatBytes(Number(f.fileSize))}
                                     </TableCell>
                                     <TableCell>
                                        {format(
                                           convertTimestampToDate(
-                                             Number(file.createdAt),
+                                             Number(f.createdAt),
                                           ),
-                                          "PPpp",
+                                          "PP",
                                        )}
                                     </TableCell>
                                  </TableRow>
                               ))
-                              .slice(0, 3)}
+                              .slice(0, 5)}
                      </TableBody>
                   </Table>
                </CardContent>

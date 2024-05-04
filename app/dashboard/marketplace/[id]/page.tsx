@@ -2,35 +2,27 @@
 
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-   AlertDialog,
-   AlertDialogAction,
-   AlertDialogCancel,
-   AlertDialogContent,
-   AlertDialogDescription,
-   AlertDialogFooter,
-   AlertDialogHeader,
-   AlertDialogTitle,
-   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
+import { useToast } from "@/components/ui/use-toast";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { UploadedFile } from "@/lib/type";
 import { convertTimestampToDate, formatAddress } from "@/lib/utils";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import Image from "next/image";
+import { BiCalendar, BiCategoryAlt, BiUser } from "react-icons/bi";
 import {
    FaFileAudio,
    FaFileImage,
    FaFileLines,
    FaFileVideo,
 } from "react-icons/fa6";
+import { LiaEthereum } from "react-icons/lia";
 import { formatEther } from "viem";
 import {
    useAccount,
+   useBalance,
    useReadContract,
    useWaitForTransactionReceipt,
    useWriteContract,
@@ -38,12 +30,15 @@ import {
 
 export default function Page({ params }: { params: { id: string } }) {
    const { isConnected, address } = useAccount();
-
    const { writeContract, isPending, data: hash, error } = useWriteContract();
+   const { data: balance } = useBalance({
+      address: address,
+   });
 
    const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
       hash,
    });
+   const { toast } = useToast();
 
    const { data: file } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
@@ -52,117 +47,131 @@ export default function Page({ params }: { params: { id: string } }) {
       args: [Number(params.id)],
    }) as { data: UploadedFile };
 
-   function requestLicense(id: number, owner: string, assetPrice: number) {
-      if (isConnected) {
-         writeContract({
-            abi: licenseValidationAbi.abi,
-            account: address,
-            address: licenseValidationContract.contractAddress as `0x${string}`,
-            functionName: "requestLicense",
-            args: [id, owner, assetPrice],
-            value: assetPrice,
+   function requestLicense(
+      id: number,
+      owner: string,
+      fileName: string,
+      assetPrice: number,
+   ) {
+      if (!isConnected) {
+         toast({
+            variant: "destructive",
+            description: "Please connect your wallet first.",
          });
+         return;
       }
+      if (file && BigInt(balance.value) < BigInt(file.price)) {
+         toast({
+            variant: "destructive",
+            description: "Insufficient balance.",
+         });
+         return;
+      }
+
+      writeContract({
+         abi: licenseValidationAbi.abi,
+         account: address,
+         address: licenseValidationContract.contractAddress as `0x${string}`,
+         functionName: "requestLicense",
+         args: [id, owner, fileName, assetPrice],
+         value: assetPrice,
+      });
    }
 
    return (
       <main className="flex h-full w-full flex-col items-start px-8">
          {file && (
-            <div className="mb-8 grid w-full grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-3">
+            <div className="mb-8 grid w-full grid-cols-1 grid-rows-2 gap-x-8 gap-y-4 md:grid-cols-3 md:grid-rows-1">
                <div className="col-span-1 flex items-center justify-center">
-                  {(file.category === "PDF" && (
-                     <FaFileLines className="size-64" />
-                  )) ||
-                     (file.category === "Image" && (
-                        <FaFileImage className="size-64" />
+                  {file.imgUrl ? (
+                     <div className="relative h-full w-full">
+                        <Image
+                           src={`${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/${file.imgUrl}`}
+                           alt={file.fileName}
+                           priority={true}
+                           sizes="100vw"
+                           fill
+                           className="h-auto w-full object-contain object-top"
+                        />
+                     </div>
+                  ) : (
+                     (file.category === "PDF" && (
+                        <FaFileLines className=" size-48 md:size-64" />
                      )) ||
-                     (file.category === "Video" &&
-                        (file.imgUrl ? (
-                           <AspectRatio ratio={16 / 9}>
-                              <Image
-                                 src={`${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/${file.imgUrl}`}
-                                 alt={file.fileName}
-                                 priority={true}
-                                 sizes="100vw"
-                                 fill
-                                 className="h-auto w-full object-cover"
-                              />
-                           </AspectRatio>
-                        ) : (
-                           <FaFileVideo className="size-64" />
-                        ))) ||
+                     (file.category === "Image" && (
+                        <FaFileImage className=" size-48 md:size-64" />
+                     )) ||
+                     (file.category === "Video" && (
+                        <FaFileVideo className=" size-48 md:size-64" />
+                     )) ||
                      (file.category === "Audio" && (
-                        <FaFileAudio className="size-64" />
-                     ))}
+                        <FaFileAudio className=" size-48 md:size-64" />
+                     ))
+                  )}
                </div>
                <div className="col-span-1 md:col-span-2">
-                  <h3 className="mb-8 flex items-center text-4xl font-bold">
-                     {file.fileName}
-                  </h3>
-                  <div className="mb-8 flex flex-col space-y-4">
-                     <p className="text-lg">
-                        <span className="font-bold">Эзэмшигч: </span>
-                        {file.fileOwner === address
-                           ? "You"
-                           : formatAddress(file.fileOwner)}
-                     </p>
-                     <p className="text-lg">
-                        <span className="font-bold">Төрөл: </span>
-                        {file.category}
-                     </p>
-                     <p className="text-lg">
-                        <span className="font-bold">Үүсгэсэн: </span>
-                        {format(
-                           convertTimestampToDate(Number(file.createdAt)),
-                           "yyyy.MM.dd",
-                        )}
-                     </p>
+                  <div className="mb-8 flex flex-col gap-y-4">
+                     <h3 className="text-4xl font-semibold">{file.fileName}</h3>
                      <p className="text-sm">{file.description}</p>
-                     <p>
-                        <span className="text-lg font-bold">Үнэ: </span>
-                        <span className="text-2xl">
-                           {formatEther(BigInt(file.price))} ETH
-                        </span>
-                     </p>
                   </div>
-                  <div className="flex max-w-40 flex-col gap-y-4">
-                     <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                           <Button
-                              size="lg"
-                              disabled={isPending || file.fileOwner === address}
-                           >
-                              Худалдаж авах
-                           </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                           <AlertDialogHeader>
-                              <AlertDialogTitle className="dark:text-gray-50">
-                                 Хүсэлт илгээх үү?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                 Цахим бүтээлийн эзэмшигч лүү хүсэлт илгээх
-                              </AlertDialogDescription>
-                           </AlertDialogHeader>
-                           <AlertDialogFooter>
-                              <AlertDialogCancel className="dark:text-gray-50">
-                                 Цуцлах
-                              </AlertDialogCancel>
-                              <AlertDialogAction
-                                 onClick={() =>
-                                    requestLicense(
-                                       file.id,
-                                       file.fileOwner,
-                                       file.price,
-                                    )
-                                 }
-                              >
-                                 Илгээх
-                              </AlertDialogAction>
-                           </AlertDialogFooter>
-                        </AlertDialogContent>
-                     </AlertDialog>
+                  <div className="grid grid-cols-2 grid-rows-2 gap-x-4 gap-y-4">
+                     <div className="flex items-center gap-x-4">
+                        <BiCategoryAlt className="size-10" />
+                        <div className="flex flex-col">
+                           <span className="font-light">Type </span>
+                           <span className="font-semibold">
+                              {file.category}
+                           </span>
+                        </div>
+                     </div>
+                     <div className="flex items-center gap-x-4">
+                        <BiUser className="size-10" />
+                        <div className="flex flex-col">
+                           <span className="font-light">Owner </span>
+                           <span className="font-semibold">
+                              {file.fileOwner === address
+                                 ? "You"
+                                 : formatAddress(file.fileOwner)}
+                           </span>
+                        </div>
+                     </div>
+                     <div className="flex items-center gap-x-4">
+                        <BiCalendar className="size-10" />
+                        <div className="flex flex-col">
+                           <span className="font-light">Uploaded at</span>
+                           <span className="font-semibold">
+                              {format(
+                                 convertTimestampToDate(Number(file.createdAt)),
+                                 "PP",
+                              )}
+                           </span>
+                        </div>
+                     </div>
+                     <div className="flex items-center gap-x-4">
+                        <LiaEthereum className="size-10" />
+                        <div className="flex flex-col">
+                           <span className="font-light">Price</span>
+                           <span className="font-semibold">
+                              {formatEther(BigInt(file.price))} ETH
+                           </span>
+                        </div>
+                     </div>
                   </div>
+                  <Button
+                     size="lg"
+                     disabled={isPending || file.fileOwner === address}
+                     className="mt-12 w-full max-w-40"
+                     onClick={() =>
+                        requestLicense(
+                           file.id,
+                           file.fileOwner,
+                           file.fileName,
+                           file.price,
+                        )
+                     }
+                  >
+                     Aвах
+                  </Button>
                </div>
             </div>
          )}

@@ -228,11 +228,20 @@ export default function Page() {
       setUploading(true);
 
       try {
+         if (!thumbnail) {
+            if (data.category === "Video") {
+               const fileUrl = URL.createObjectURL(file);
+               const thumbnailVideo = await getThumbnailForVideo(
+                  fileUrl,
+                  file.name,
+               );
+               setThumbnail(thumbnailVideo as File);
+            }
+         }
          let thumbnailRes = null;
-         if (data.category === "Video") {
-            const fileUrl = URL.createObjectURL(file);
-            const thumbnail = await getThumbnailForVideo(fileUrl, file.name);
-            thumbnailRes = await pinFileToIPFS(thumbnail as File);
+
+         if (thumbnail) {
+            thumbnailRes = await pinFileToIPFS(thumbnail);
          }
 
          const encryptedFile = await lit.encryptFile(String(fileId), file);
@@ -390,7 +399,7 @@ export default function Page() {
                      name="category"
                      render={({ field }) => (
                         <FormItem>
-                           <FormLabel>Category</FormLabel>
+                           <FormLabel>Type</FormLabel>
                            <Select
                               defaultValue={field.value}
                               onValueChange={(value) => {

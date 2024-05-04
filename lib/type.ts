@@ -28,8 +28,10 @@ export type UploadedFile = {
 export type FileRequest = {
    requestId: number,
    fileId: number,
+   fileName: string,
    requester: string,
    fileOwner: string,
+   requestedAt: number,
    isApproved: boolean,
    assetPrice: number,
 }

@@ -28,12 +28,12 @@ export default function Page({
    const { address } = useAccount();
    const [filteredFiles, setFilteredFiles] = useState<UploadedFile[]>([]);
 
-   const { data: marketFiles } = useReadContract({
+   const { data: marketFiles, error } = useReadContract({
       address: licenseValidationContract.contractAddress as `0x${string}`,
       abi: licenseValidationAbi.abi,
       functionName: "getPublicFiles",
       account: address,
-   }) as { data: UploadedFile[] };
+   }) as { data: UploadedFile[]; error: any };
 
    useEffect(() => {
       setFilteredFiles(marketFiles);

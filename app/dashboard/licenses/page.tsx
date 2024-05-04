@@ -20,11 +20,27 @@ import {
 } from "@/components/ui/dialog";
 import { Logo } from "@/components/ui/logo";
 import { ScreenHeader } from "@/components/ui/screen-header";
+import {
+   Sheet,
+   SheetContent,
+   SheetDescription,
+   SheetHeader,
+   SheetTitle,
+   SheetTrigger,
+} from "@/components/ui/sheet";
 import { FileCardsSkeleton } from "@/components/ui/skeletons";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { License } from "@/lib/type";
-import { convertTimestampToDate } from "@/lib/utils";
-import { ArrowRightIcon, DownloadIcon } from "@radix-ui/react-icons";
+import {
+   convertTimestampToDate,
+   formatAddress,
+   formatBytes,
+} from "@/lib/utils";
+import {
+   ArrowRightIcon,
+   DownloadIcon,
+   InfoCircledIcon,
+} from "@radix-ui/react-icons";
 import { format } from "date-fns";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
@@ -34,6 +50,7 @@ import {
    FaFileLines,
    FaFileVideo,
 } from "react-icons/fa6";
+import { formatEther } from "viem";
 
 import { useAccount, useReadContract } from "wagmi";
 
@@ -75,17 +92,90 @@ export default function Page() {
                <FileCardsSkeleton />
             ) : (
                userLicenses &&
-               userLicenses.toReversed().map((l, i) => (
-                  <Card className="w-full" key={i}>
-                     <CardHeader>
-                        <CardTitle className="truncate">{l.fileName}</CardTitle>
+               userLicenses.toReversed().map((l) => (
+                  <Card className="w-full" key={l.fileId}>
+                     <CardHeader className="px-4">
+                        <div className="flex items-center justify-between gap-x-2">
+                           <CardTitle className="truncate">
+                              {l.fileName}
+                           </CardTitle>
+                           <Sheet>
+                              <SheetTrigger asChild>
+                                 <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="size-8 rounded-full"
+                                 >
+                                    <InfoCircledIcon className="size-5" />
+                                 </Button>
+                              </SheetTrigger>
+                              <SheetContent className="border-gray-200 dark:border-gray-800">
+                                 <SheetHeader className="mb-8">
+                                    <SheetTitle>{l.fileName}</SheetTitle>
+                                    <SheetDescription>
+                                       {l.description}
+                                    </SheetDescription>
+                                 </SheetHeader>
+                                 <div className="flex flex-col gap-y-4 border-t border-gray-200 py-4 dark:border-gray-800">
+                                    <h3 className="text-lg font-bold">
+                                       File details
+                                    </h3>
+                                    <div className="flex flex-col gap-x-2">
+                                       <span className="text-sm font-semibold">
+                                          Owner address
+                                       </span>
+                                       <span className="truncate text-sm font-light">
+                                          {formatAddress(l.fileOwner)}
+                                       </span>
+                                    </div>
+                                    <div className="flex flex-col gap-x-2">
+                                       <span className="text-sm font-semibold">
+                                          Type
+                                       </span>
+                                       <span className="text-sm font-light">
+                                          {l.category}
+                                       </span>
+                                    </div>
+                                    <div className="flex flex-col gap-x-2">
+                                       <span className="text-sm font-semibold">
+                                          Size
+                                       </span>
+                                       <span className="text-sm font-light">
+                                          {formatBytes(Number(l.fileSize))}
+                                       </span>
+                                    </div>
+                                    <div className="flex flex-col gap-x-2">
+                                       <span className="text-sm font-semibold">
+                                          Licensed at
+                                       </span>
+                                       <span className="text-sm font-light">
+                                          {format(
+                                             convertTimestampToDate(
+                                                Number(l.createdAt),
+                                             ),
+                                             "PPpp",
+                                          )}
+                                       </span>
+                                    </div>
+                                    <div className="flex flex-col gap-x-2">
+                                       <span className="text-sm font-semibold">
+                                          Price
+                                       </span>
+                                       <span className="text-sm font-light">
+                                          {formatEther(BigInt(l.price))} ETH
+                                       </span>
+                                    </div>
+                                 </div>
+                              </SheetContent>
+                           </Sheet>
+                        </div>
                         <CardDescription className="truncate">
                            {l.description}
                         </CardDescription>
                      </CardHeader>
                      <Dialog>
                         <DialogTrigger asChild>
-                           <CardContent className="flex w-full items-center justify-center hover:cursor-pointer">
+                           <CardContent className="flex w-full items-center justify-center transition-all  duration-150 ease-in-out hover:cursor-pointer hover:opacity-70">
                               {(l.category === "PDF" && (
                                  <FaFileLines className="size-24" />
                               )) ||

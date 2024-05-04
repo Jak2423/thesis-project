@@ -35,8 +35,10 @@ contract LicenseMarketplace {
    struct LicenseRequest {
         uint256 requestId;
         uint256 fileId;
+        string fileName;
         address requester;
         address fileOwner;
+        uint256 requestedAt;
         bool isApproved;
         uint256  assetPrice;
    }
@@ -92,7 +94,7 @@ contract LicenseMarketplace {
          emit FileShared(msg.sender, _fileName);
       }
 
-      function requestLicense(uint256 _fileId, address _fileOwner, uint256 _assetPrice) public payable {
+      function requestLicense(uint256 _fileId, address _fileOwner, string memory _fileName, uint256 _assetPrice) public payable {
          require(!isFileOwnedOrLicensed(msg.sender, _fileId), "User already owns or has a license for this file");
          require(msg.value == _assetPrice, "Price not met");
 
@@ -100,8 +102,10 @@ contract LicenseMarketplace {
          LicenseRequest memory newRequest = LicenseRequest({
             requestId: requestId,
             fileId: _fileId,
+            fileName: _fileName,
             requester: msg.sender,
             fileOwner: _fileOwner,
+            requestedAt: block.timestamp,
             isApproved: false,
             assetPrice: _assetPrice
          });
