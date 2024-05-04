@@ -53,8 +53,11 @@ export default function Page() {
                            <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                            <span className="sr-only">Toggle theme</span>
                         </Button>
-                        <Link href={"/connect"}>
-                           <Button variant="outline">Connect Wallet</Button>
+                        <Link
+                           href={"/connect"}
+                           className="inline-flex h-9 items-center justify-center whitespace-nowrap rounded-md border border-gray-200 px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus-visible:ring-gray-300"
+                        >
+                           Connect Wallet
                         </Link>
                      </div>
                   </div>
