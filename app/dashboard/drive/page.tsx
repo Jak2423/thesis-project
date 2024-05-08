@@ -231,7 +231,7 @@ export default function Page() {
                </Table>
             </TabsContent>
             <TabsContent value="grid">
-               <div className="relative grid w-full grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
+               <div className="relative grid w-full grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
                   {isLoading ? (
                      <FileCardsSkeleton />
                   ) : (

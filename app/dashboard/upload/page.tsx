@@ -25,12 +25,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import lit from "@/lib/lit";
+import { pinFileToIPFS } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { parseEther } from "ethers";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { pdfjs } from "react-pdf";
 import {
    useAccount,
    useConnect,
@@ -41,8 +41,6 @@ import {
 import { injected } from "wagmi/connectors";
 import { z } from "zod";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-
 const formSchema = z.object({
    fileName: z.string().min(1, {
       message: "Бүтээлийн нэрийг оруулна уу.",
@@ -52,17 +50,16 @@ const formSchema = z.object({
    }),
    price: z.coerce
       .number({ required_error: "Бүтээлийн үнийг оруулна уу." })
-      .gte(0),
+      .positive({ message: "Бүтээлийн үнийг оруулна уу." }),
    category: z.string({ required_error: "Бүтээлийн төрлийг сонгоно уу." }),
-   uploadedFile: z.any(),
-   thumbnail: z.any(),
+   uploadedFile: z.instanceof(File).refine((file) => file.size > 0, {
+      message: "Оруулах бүтээлээ сонгоно уу.",
+   }),
+   thumbnail: z.instanceof(File).nullable().optional(),
 });
 
 export default function Page() {
    const [uploading, setUploading] = useState(false);
-   const [file, setFile] = useState<File | null>(null);
-   const [imgUrl, setImgUrl] = useState(null);
-   const [thumbnail, setThumbnail] = useState<File | null>(null);
    const { connect } = useConnect();
    const { toast } = useToast();
    const [acceptedFileType, setAcceptedFileType] = useState<string>("");
@@ -94,7 +91,6 @@ export default function Page() {
    }
 
    const { writeContract, isPending, data: hash } = useWriteContract();
-
    const { isLoading, isSuccess, isError } = useWaitForTransactionReceipt({
       hash,
    });
@@ -111,44 +107,11 @@ export default function Page() {
       defaultValues: {
          fileName: "",
          description: "",
+         price: 0,
       },
    });
 
-   async function getThumbnailForVideo(videoUrl: string, fileName: string) {
-      const video = document.createElement("video");
-      const canvas = document.createElement("canvas");
-      video.style.display = "none";
-      canvas.style.display = "none";
-
-      await new Promise<void>((resolve, reject) => {
-         video.addEventListener("loadedmetadata", () => {
-            video.width = video.videoWidth;
-            video.height = video.videoHeight;
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            video.currentTime = video.duration * 0.1;
-         });
-         video.addEventListener("seeked", () => resolve());
-         video.src = videoUrl;
-      });
-
-      canvas
-         .getContext("2d")
-         .drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-
-      return new Promise((resolve) => {
-         canvas.toBlob((blob) => {
-            const file = new File([blob], `${fileName}_thumbnail.png`, {
-               type: "image/png",
-            });
-            resolve(file);
-         }, "image/png");
-      });
-   }
-
-   async function getImageFromPDF(pdfUrl: string, fileName: string) {}
-
-   async function handleUploadFile(event: ChangeEvent<HTMLInputElement>) {
+   function handleUploadFile(event: ChangeEvent<HTMLInputElement>) {
       const selectedFile = event.target.files?.[0];
       const maxFileSize = 52428800;
 
@@ -161,11 +124,7 @@ export default function Page() {
          if (fileInputRef.current) {
             fileInputRef.current.value = "";
          }
-         setFile(null);
          return;
-      }
-      if (selectedFile) {
-         setFile(selectedFile);
       }
    }
 
@@ -176,75 +135,33 @@ export default function Page() {
       if (selectedFile && selectedFile.size > maxFileSize) {
          toast({
             variant: "destructive",
-            description: "File size exceeds the maximum limit of 10MB.",
+            description:
+               "Thumbnail file size exceeds the maximum limit of 50MB.",
          });
          event.target.value = "";
-
          if (thumbnailInputRef.current) {
             thumbnailInputRef.current.value = "";
          }
-
-         setThumbnail(null);
          return;
       }
-
-      if (selectedFile) {
-         setThumbnail(selectedFile);
-      }
-   }
-
-   async function pinFileToIPFS(file: File): Promise<any> {
-      const formData = new FormData();
-      formData.append("file", file, file.name);
-
-      const res = await fetch(
-         "https://api.pinata.cloud/pinning/pinFileToIPFS",
-         {
-            method: "POST",
-            headers: {
-               pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY!,
-               pinata_secret_api_key:
-                  process.env.NEXT_PUBLIC_PINATA_API_SECRET!,
-            },
-            body: formData,
-         },
-      );
-      return res.json();
    }
 
    async function onSubmit(data: z.infer<typeof formSchema>) {
       if (!isConnected) {
          connect({ connector: injected() });
       }
-
-      if (!file) {
-         toast({
-            variant: "destructive",
-            description: "Please select a file to upload.",
-         });
-         return;
-      }
-
       setUploading(true);
 
       try {
-         if (!thumbnail) {
-            if (data.category === "Video") {
-               const fileUrl = URL.createObjectURL(file);
-               const thumbnailVideo = await getThumbnailForVideo(
-                  fileUrl,
-                  file.name,
-               );
-               setThumbnail(thumbnailVideo as File);
-            }
-         }
          let thumbnailRes = null;
-
-         if (thumbnail) {
-            thumbnailRes = await pinFileToIPFS(thumbnail);
+         if (data.thumbnail) {
+            thumbnailRes = await pinFileToIPFS(data.thumbnail);
          }
 
-         const encryptedFile = await lit.encryptFile(String(fileId), file);
+         const encryptedFile = await lit.encryptFile(
+            String(fileId),
+            data.uploadedFile,
+         );
          const res = await pinFileToIPFS(encryptedFile);
 
          if (res.isDuplicate) {
@@ -266,7 +183,7 @@ export default function Page() {
                   data.description,
                   data.category,
                   res.IpfsHash,
-                  file.size,
+                  data.uploadedFile.size,
                   thumbnailRes?.IpfsHash || "",
                   parseEther(String(data.price)),
                ],
@@ -385,7 +302,13 @@ export default function Page() {
                                  {...field}
                                  type="file"
                                  accept="image/*"
-                                 onChange={handleUploadThumbnail}
+                                 onChange={(event) => {
+                                    handleUploadThumbnail(event);
+                                    form.setValue(
+                                       "thumbnail",
+                                       event.target.files?.[0] || null,
+                                    );
+                                 }}
                                  ref={thumbnailInputRef}
                                  className="file:text-gray-900 file:dark:text-gray-200"
                               />
@@ -435,7 +358,13 @@ export default function Page() {
                                  type="file"
                                  ref={fileInputRef}
                                  accept={acceptedFileType}
-                                 onChange={handleUploadFile}
+                                 onChange={(event) => {
+                                    handleUploadFile(event);
+                                    form.setValue(
+                                       "uploadedFile",
+                                       event.target.files?.[0] || null,
+                                    );
+                                 }}
                                  className="file:text-gray-900 file:dark:text-gray-200"
                                  disabled={!acceptedFileType}
                               />
