@@ -52,9 +52,11 @@ const formSchema = z.object({
       .number({ required_error: "Бүтээлийн үнийг оруулна уу." })
       .positive({ message: "Бүтээлийн үнийг оруулна уу." }),
    category: z.string({ required_error: "Бүтээлийн төрлийг сонгоно уу." }),
-   uploadedFile: z.instanceof(File).refine((file) => file.size > 0, {
-      message: "Оруулах бүтээлээ сонгоно уу.",
-   }),
+   uploadedFile: z
+      .instanceof(File, { message: "Оруулах бүтээлээ сонгоно уу." })
+      .refine((file) => file.size > 0, {
+         message: "Оруулах бүтээлээ сонгоно уу.",
+      }),
    thumbnail: z.instanceof(File).nullable().optional(),
 });
 
