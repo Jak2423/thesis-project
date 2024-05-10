@@ -43,19 +43,19 @@ import { z } from "zod";
 
 const formSchema = z.object({
    fileName: z.string().min(1, {
-      message: "Бүтээлийн нэрийг оруулна уу.",
+      message: "Please enter a file name.",
    }),
    description: z.string().min(1, {
-      message: "Бүтээлийн дэлгэрэнгүй тайлбар оруулна уу.",
+      message: "Please enter a description.",
    }),
    price: z.coerce
-      .number({ required_error: "Бүтээлийн үнийг оруулна уу." })
-      .positive({ message: "Бүтээлийн үнийг оруулна уу." }),
-   category: z.string({ required_error: "Бүтээлийн төрлийг сонгоно уу." }),
+      .number({ required_error: "Please enter a price." })
+      .positive(),
+   category: z.string({ required_error: "Please select a type." }),
    uploadedFile: z
-      .instanceof(File, { message: "Оруулах бүтээлээ сонгоно уу." })
+      .instanceof(File, { message: "Please upload a file." })
       .refine((file) => file.size > 0, {
-         message: "Оруулах бүтээлээ сонгоно уу.",
+         message: "Please upload a file.",
       }),
    thumbnail: z.instanceof(File).nullable().optional(),
 });
