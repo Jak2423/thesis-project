@@ -1,9 +1,9 @@
 "use client";
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
+import { CardsSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScreenHeader } from "@/components/ui/screen-header";
-import { CardsSkeleton } from "@/components/ui/skeletons";
 import {
    Table,
    TableBody,

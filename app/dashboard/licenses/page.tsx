@@ -2,6 +2,8 @@
 
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
 import PreviewFile from "@/components/preview-file";
+import { FileCardsSkeleton } from "@/components/skeletons";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import {
    Card,
@@ -28,7 +30,6 @@ import {
    SheetTitle,
    SheetTrigger,
 } from "@/components/ui/sheet";
-import { FileCardsSkeleton } from "@/components/ui/skeletons";
 import licenseValidationContract from "@/contracts/contractAddress.json";
 import { License } from "@/lib/type";
 import {
@@ -44,6 +45,7 @@ import {
 import { format } from "date-fns";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import Image from "next/image";
 import {
    FaFileAudio,
    FaFileImage,
@@ -87,7 +89,7 @@ export default function Page() {
    return (
       <main className="flex w-full flex-col items-start px-8  ">
          <ScreenHeader className="mb-8">My Licenses</ScreenHeader>
-         <div className="relative grid w-full grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+         <div className="relative grid w-full grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
             {isLoading ? (
                <FileCardsSkeleton />
             ) : (
@@ -112,7 +114,7 @@ export default function Page() {
                               <SheetContent className="border-gray-200 dark:border-gray-800">
                                  <SheetHeader className="mb-8">
                                     <SheetTitle>{l.fileName}</SheetTitle>
-                                    <SheetDescription>
+                                    <SheetDescription className="break-all">
                                        {l.description}
                                     </SheetDescription>
                                  </SheetHeader>
@@ -176,9 +178,22 @@ export default function Page() {
                      <Dialog>
                         <DialogTrigger asChild>
                            <CardContent className="flex w-full items-center justify-center transition-all  duration-150 ease-in-out hover:cursor-pointer hover:opacity-70">
-                              {(l.category === "PDF" && (
-                                 <FaFileLines className="size-24" />
-                              )) ||
+                              {l.imgUrl ? (
+                                 <AspectRatio ratio={16 / 9}>
+                                    <Image
+                                       src={`${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/${l.imgUrl}`}
+                                       alt={l.fileName}
+                                       priority={true}
+                                       sizes="100vw"
+                                       fill
+                                       quality={20}
+                                       className="pointer-events-none w-full object-cover object-center"
+                                    />
+                                 </AspectRatio>
+                              ) : (
+                                 (l.category === "PDF" && (
+                                    <FaFileLines className="size-24" />
+                                 )) ||
                                  (l.category === "Image" && (
                                     <FaFileImage className="size-24" />
                                  )) ||
@@ -187,7 +202,8 @@ export default function Page() {
                                  )) ||
                                  (l.category === "Audio" && (
                                     <FaFileAudio className="size-24" />
-                                 ))}
+                                 ))
+                              )}
                            </CardContent>
                         </DialogTrigger>
                         <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-16 text-gray-100 backdrop-blur-sm dark:bg-transparent">

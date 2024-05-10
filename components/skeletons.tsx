@@ -1,10 +1,11 @@
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import {
    Card,
    CardContent,
    CardDescription,
    CardHeader,
    CardTitle,
-} from "./card";
+} from "./ui/card";
 
 const shimmer =
    "before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:dark:via-gray-800/40  before:via-gray-200/40 before:to-transparent";
@@ -42,7 +43,9 @@ export function FileCardSkeleton() {
             <CardDescription className="h-5 w-20 rounded-md bg-gray-100 dark:bg-gray-900" />
          </CardHeader>
          <CardContent className="flex w-full items-center justify-center pb-8">
-            <div className="h-24 w-20 rounded-md bg-gray-100 shadow  dark:bg-gray-900 " />
+            <AspectRatio ratio={16 / 9}>
+               <div className="h-full w-full rounded-md bg-gray-100 shadow  dark:bg-gray-900 " />
+            </AspectRatio>
          </CardContent>
       </Card>
    );

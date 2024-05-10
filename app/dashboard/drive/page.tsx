@@ -2,6 +2,8 @@
 
 import licenseValidationAbi from "@/artifacts/contracts/LicenseMarketplace.sol/LicenseMarketplace.json";
 import PreviewFile from "@/components/preview-file";
+import { FileCardsSkeleton } from "@/components/skeletons";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import {
    Card,
@@ -26,7 +28,6 @@ import {
    SheetTitle,
    SheetTrigger,
 } from "@/components/ui/sheet";
-import { FileCardsSkeleton } from "@/components/ui/skeletons";
 import {
    Table,
    TableBody,
@@ -45,6 +46,7 @@ import {
 } from "@/lib/utils";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
+import Image from "next/image";
 import {
    FaFileAudio,
    FaFileImage,
@@ -162,7 +164,7 @@ export default function Page() {
                                              <SheetTitle>
                                                 {f.fileName}
                                              </SheetTitle>
-                                             <SheetDescription>
+                                             <SheetDescription className="break-all">
                                                 {f.description}
                                              </SheetDescription>
                                           </SheetHeader>
@@ -231,7 +233,7 @@ export default function Page() {
                </Table>
             </TabsContent>
             <TabsContent value="grid">
-               <div className="relative grid w-full grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+               <div className="relative grid w-full grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
                   {isLoading ? (
                      <FileCardsSkeleton />
                   ) : (
@@ -259,7 +261,7 @@ export default function Page() {
                                              <SheetTitle>
                                                 {f.fileName}
                                              </SheetTitle>
-                                             <SheetDescription>
+                                             <SheetDescription className="break-all">
                                                 {f.description}
                                              </SheetDescription>
                                           </SheetHeader>
@@ -326,10 +328,23 @@ export default function Page() {
                                  </CardDescription>
                               </CardHeader>
                               <DialogTrigger asChild>
-                                 <CardContent className="flex w-full items-center justify-center pb-8 transition-all duration-150 ease-in-out hover:cursor-pointer hover:opacity-70">
-                                    {(f.category === "PDF" && (
-                                       <FaFileLines className="size-24" />
-                                    )) ||
+                                 <CardContent className="relative flex w-full flex-1 items-center justify-center px-4 pb-8 transition-all duration-150 ease-in-out hover:cursor-pointer hover:opacity-70">
+                                    {f.imgUrl ? (
+                                       <AspectRatio ratio={16 / 9}>
+                                          <Image
+                                             src={`${process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL}/ipfs/${f.imgUrl}`}
+                                             alt={f.fileName}
+                                             priority={true}
+                                             sizes="100vw"
+                                             fill
+                                             quality={20}
+                                             className="pointer-events-none w-full object-cover object-center"
+                                          />
+                                       </AspectRatio>
+                                    ) : (
+                                       (f.category === "PDF" && (
+                                          <FaFileLines className="size-24" />
+                                       )) ||
                                        (f.category === "Image" && (
                                           <FaFileImage className="size-24" />
                                        )) ||
@@ -338,7 +353,8 @@ export default function Page() {
                                        )) ||
                                        (f.category === "Audio" && (
                                           <FaFileAudio className="size-24" />
-                                       ))}
+                                       ))
+                                    )}
                                  </CardContent>
                               </DialogTrigger>
                               <DialogContent className="h-screen w-full max-w-screen-2xl border-none bg-transparent px-4 text-gray-100 backdrop-blur-sm dark:bg-transparent md:px-16">
