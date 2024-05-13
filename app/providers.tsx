@@ -1,21 +1,22 @@
 "use client";
 
-import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
+import {
+   RainbowKitProvider,
+   darkTheme,
+   getDefaultConfig,
+} from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { WagmiProvider, createConfig, http } from "wagmi";
-import { sepolia } from "wagmi/chains";
-import { injected, walletConnect } from "wagmi/connectors";
+import { sepolia } from "viem/chains";
+import { WagmiProvider } from "wagmi";
 
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
-const config = createConfig({
+const config = getDefaultConfig({
+   appName: "Licens",
+   projectId: projectId,
    chains: [sepolia],
-   transports: {
-      [sepolia.id]: http(),
-   },
-   connectors: [injected(), walletConnect({ projectId })],
    ssr: true,
 });
 
