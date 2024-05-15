@@ -52,20 +52,18 @@ export default function Page() {
    return (
       <>
          <main className="flex w-full flex-col">
-            <div className="h-screen">
+            <div className="h-screen min-h-[32rem]">
                <div className="flex w-full items-center justify-center">
-                  <div className="md:px- flex w-full items-center  justify-between px-8 py-4 md:px-16">
-                     <div className="">
-                        <Link
-                           href={"/dashboard"}
-                           className="flex items-center justify-start gap-x-1"
-                        >
-                           <Logo className="size-10 fill-gray-950 dark:fill-gray-100" />
-                           <span className="text-2xl font-semibold tracking-tighter">
-                              Licens
-                           </span>
-                        </Link>
-                     </div>
+                  <div className="flex w-full items-center justify-between px-8 py-4 md:px-16">
+                     <Link
+                        href={"/dashboard"}
+                        className="flex items-center justify-start gap-x-1"
+                     >
+                        <Logo className="size-10 fill-gray-950 dark:fill-gray-100" />
+                        <span className="text-2xl font-semibold tracking-tighter">
+                           Licens
+                        </span>
+                     </Link>
                      <div className="flex items-center gap-x-4">
                         <Button
                            variant="ghost"
@@ -85,9 +83,9 @@ export default function Page() {
                      </div>
                   </div>
                </div>
-               <div className="grid w-full grid-cols-1 items-center justify-center gap-x-8 px-8 md:grid-cols-2 md:px-16 ">
-                  <div className="mt-32 flex flex-col gap-y-6 md:mt-0 ">
-                     <h1 className="text-start text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+               <div className="grid w-full grid-cols-1 items-center justify-center gap-x-8 px-8 md:grid-cols-2 md:px-16">
+                  <div className="mt-32 flex flex-col gap-y-6 md:mt-0">
+                     <h1 className="w-72 text-start text-3xl font-bold  tracking-tight sm:w-full md:text-5xl lg:text-6xl">
                         Цахим бүтээлийн систем
                      </h1>
                      <p className="w-full pr-0 text-gray-500 dark:text-gray-300 md:pr-24">
